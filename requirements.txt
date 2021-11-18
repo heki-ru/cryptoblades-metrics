@@ -1,0 +1,4 @@
+requests >= 2.26.0
+web3 >= 5.24.0
+prometheus-client >= 0.12.0
+pyyaml >= 6.0

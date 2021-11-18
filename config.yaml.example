@@ -1,0 +1,38 @@
+cryptoblades_abi: ./abi/cryptoblades.abi
+weapons_abi: ./abi/weapons.abi
+characters_abi: ./abi/characters.abi
+raid_abi: ./abi/raid.abi
+oracle_abi: ./abi/oracle.abi
+bsc:
+  path_http: http://localhost:8645/
+  path_http_fallback: https://bsc-dataseed.binance.org/
+  cryptoblades_address: '0x39Bea96e13453Ed52A734B6ACEeD4c41F57B2271'
+  weapons_address: '0x7E091b0a220356B157131c831258A9C98aC8031A'
+  characters_address: '0xc6f252c2CdD4087e30608A35c022ce490B58179b'
+  raid_address: '0x1067d34D7bEBe2BE81657e8a2E3CFEBb0161F96b'
+  oracle_address: '0x1CBFA0EC28dA66896946474B2A93856Eb725FbbA'
+
+heco:
+  path_http: http://localhost:8745/
+  path_http_fallback: https://http-mainnet.hecochain.com/
+  cryptoblades_address: '0x29869EDb088466a49f75654d8F04edd16Bf60e75'
+  weapons_address: '0xa0f254436E43239D2B3947A9D590C495738B6A4C'
+  characters_address: '0xF6092CDEaabd02069cB56E2b770367AAcf49dfba'
+  raid_address: '0x0aBb23EA06960608a4fa1529678C9abc208b4E8d'
+  oracle_address: '0x4fa018401fFF54804caB82b19F3dABA64C30C238'
+oec:
+  path_http: http://localhost:8845/
+  path_http_fallback: https://exchainrpc.okex.org/
+  cryptoblades_address: '0x98145a2fEBac238280bbdEDc2757dC162318b16e'
+  weapons_address: '0x364759180a6484e57ecd73c042264a6da75770e8'
+  characters_address: '0x6a1d1803d4edf5cf27edb64ae95a22f81707ea38'
+  raid_address: '0x29F8917c2E6e6bAcc9FD813354bCBEd8A8dD89E3'
+  oracle_address: '0xc72ef1f4bED83A5B60d74D01E10C4334a12d4d28'
+poly:
+  path_http: http://localhost:8945/
+  path_http_fallback: https://polygon-rpc.com/
+  cryptoblades_address: '0x070b1A95898B927A900A1F9F42b114154648E51A'
+  weapons_address: '0xD9C5449EfB3f99952F73e824688724aAFB81dE6E'
+  characters_address: '0x929059Fef67b88CE2F4127e59B50bEA123981998'
+  raid_address: '0x6F104F58fFFC13b66A1BD45AA228167c4ADf746F'
+  oracle_address: '0x788A0cBDd8bbC5616998DaFF1cC836e253b6f04F'
