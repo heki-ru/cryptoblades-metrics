@@ -35,3 +35,11 @@ poly:
   characters_address: '0x929059Fef67b88CE2F4127e59B50bEA123981998'
   raid_address: '0x6F104F58fFFC13b66A1BD45AA228167c4ADf746F'
   oracle_address: '0x788A0cBDd8bbC5616998DaFF1cC836e253b6f04F'
+ava:
+  path_http: http://localhost:9650/ext/bc/C/rpc
+  path_http_fallback: https://api.avax.network/ext/bc/C/rpc
+  cryptoblades_address: '0x46419526a59ec1d73b72620ae16da091bE8486bd'
+  weapons_address: '0xe8f172B51186A4c8127D5eE05617dCA6aAf478fE'
+  characters_address: '0x28857ccCCa599f0876792094870758A18F581Dc0'
+  raid_address: '0xbAC6B71a5bC3517Bee588299980B3C357a518e5C'
+  oracle_address: '0xF1C976d354d206935a3191dbEeA5a8C2f5fD9BB8'

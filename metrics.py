@@ -126,6 +126,6 @@ class Metrics:
 
 if __name__ == '__main__':
     start_http_server(addr='127.0.0.1', port=7373)
-    network_list = ['bsc', 'heco', 'oec', 'poly']
+    network_list = ['bsc', 'heco', 'oec', 'poly', 'ava']
     metrics = Metrics()
     metrics.run_threads()
