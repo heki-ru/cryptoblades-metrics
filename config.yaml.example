@@ -35,7 +35,7 @@ poly:
   characters_address: '0x929059Fef67b88CE2F4127e59B50bEA123981998'
   raid_address: '0x6F104F58fFFC13b66A1BD45AA228167c4ADf746F'
   oracle_address: '0x788A0cBDd8bbC5616998DaFF1cC836e253b6f04F'
-ava:
+avax:
   path_http: http://localhost:9650/ext/bc/C/rpc
   path_http_fallback: https://api.avax.network/ext/bc/C/rpc
   cryptoblades_address: '0x46419526a59ec1d73b72620ae16da091bE8486bd'

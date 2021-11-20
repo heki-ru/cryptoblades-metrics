@@ -17,8 +17,8 @@ class Cryptoblades:
             self.config = config['oec']
         elif network == 'poly':
             self.config = config['poly']
-        elif network == 'ava':
-            self.config = config['ava']
+        elif network == 'avax':
+            self.config = config['avax']
         else:
             raise TypeError(f'Wrong network {network}')
         if path is not None:
