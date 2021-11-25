@@ -1,8 +1,15 @@
-cryptoblades_abi: ./abi/cryptoblades.abi
-weapons_abi: ./abi/weapons.abi
-characters_abi: ./abi/characters.abi
-raid_abi: ./abi/raid.abi
-oracle_abi: ./abi/oracle.abi
+mongodb:
+  host: 127.0.0.1
+  port: 27017
+  login: login
+  password: password
+  source: database
+abi:
+  cryptoblades: ./abi/cryptoblades.abi
+  weapons: ./abi/weapons.abi
+  characters: ./abi/characters.abi
+  raid: ./abi/raid.abi
+  oracle: ./abi/oracle.abi
 bsc:
   path_http: http://localhost:8645/
   path_http_fallback: https://bsc-dataseed.binance.org/
