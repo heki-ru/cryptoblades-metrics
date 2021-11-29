@@ -232,12 +232,14 @@ class Parser:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]}'
             stars = ':star:' * (d['weapon_stars'] + 1)
+            avg = f'({d["weapon_stats_dict"][1]} avg)'
         elif len(d['weapon_stats_dict']) == 4:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]} ' \
                     f'{get_element(d["weapon_stats_dict"][2])[0]}{get_element(d["weapon_stats_dict"][2])[1]} ' \
                     f'+{d["weapon_stats_dict"][3]}'
             stars = '<:orangestar:902186827232968764>' * (d['weapon_stars'] + 1)
+            avg = f'({(d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) / 2} avg)'
         elif len(d['weapon_stats_dict']) == 6:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]} ' \
@@ -246,13 +248,15 @@ class Parser:
                     f'{get_element(d["weapon_stats_dict"][4])[0]}{get_element(d["weapon_stats_dict"][4])[1]} ' \
                     f'+{d["weapon_stats_dict"][5]}'
             stars = '<:redstar:902186790973210704>' * (d['weapon_stars'] + 1)
+            avg = f'({(d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) + d["weapon_stats_dict"][5] / 3} avg)'
         else:
             stats = 'Wrong weapon stats '
             stars = f' {d["weapon_stars"] + 1}*'
+            avg = f'(0 avg)'
             print('Wrong weapon stats', d['weapon_stats_dict'])
         webhook = DiscordWebhook(url=self.webhook_url_weapons,
                                  content=f'{pre} {status} {get_element(d["weapon_trait"])[0]}{stars} {d["weapon_id"]} '
-                                         f'-- {stats} '
+                                         f'{avg} -- {stats} '
                                          f'{bp} - **{d["weapon_price"]} SKILL**')
         webhook.execute()
 
