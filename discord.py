@@ -96,7 +96,7 @@ class Parser:
                     args = block_filter.get_new_entries()
                     asyncio.run(self.main(*args))
                     time.sleep(1)
-            except Timeout as err:
+            except (Timeout, ValueError) as err:
                 print(str(err))
                 time.sleep(1)
 
