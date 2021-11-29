@@ -316,7 +316,8 @@ class Parser:
                             decoded_txn = self.cb.decode_input_market(txn['input'])[1]
                             if method == '0x346710fd':
                                 if decoded_txn['_targetBuyer'] != '0x0000000000000000000000000000000000000000':
-                                    print(f'Private trade for {decoded_txn["_targetBuyer"]} txn {txn_hash}')
+                                    print(f'{self.network} - private trade for {decoded_txn["_targetBuyer"]} '
+                                          f'txn {txn_hash}')
                                     break
                                 _id, price = decoded_txn['_id'], decoded_txn['_price']
                                 status = 'Listed'
@@ -344,7 +345,7 @@ class Parser:
                                                 'value': d['character_value'],
                                                 'txn': txn_hash,
                                                 'time': int(time.time())}, True)
-                                print(f'CBC {status} {d["character_id"]} {d["character_price"]} {txn_hash}')
+                                print(f'{self.network} CBC {status} {d["character_id"]} {d["character_price"]} {txn_hash}')
                                 self.run_character_webhook(d, status)
                             elif decoded_txn['_tokenAddress'] == self.cb.weapons_address:
                                 if method == '0xa6f95726':
@@ -365,7 +366,7 @@ class Parser:
                                                 'bonus': d['weapon_bonus_power'],
                                                 'txn': txn_hash,
                                                 'time': int(time.time())}, True)
-                                print(f'CBW {status} {d["weapon_id"]} {d["weapon_price"]} {txn_hash}')
+                                print(f'{self.network} CBW {status} {d["weapon_id"]} {d["weapon_price"]} {txn_hash}')
                                 self.run_weapon_webhook(d, status)
                             elif decoded_txn['_tokenAddress'] == self.cb.shields_address:
                                 if method == '0xa6f95726':
@@ -386,7 +387,7 @@ class Parser:
                                                 'bonus': d['shield_bonus_power'],
                                                 'txn': txn_hash,
                                                 'time': int(time.time())}, True)
-                                print(f'CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
+                                print(f'{self.network} CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
                                 self.run_shield_webhook(d, status)
         except BlockNotFound:
             pass
