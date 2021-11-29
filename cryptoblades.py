@@ -7,7 +7,7 @@ from web3.middleware import geth_poa_middleware
 
 class Cryptoblades:
     def __init__(self, network, path=None, fallback=False):
-        with open('./config.yaml') as f:
+        with open('config.yaml') as f:
             config = yaml.full_load(f)
         if network == 'bsc':
             self.config = config['bsc']
@@ -43,6 +43,16 @@ class Cryptoblades:
         with open(config['abi']['characters']) as f:
             self.characters_abi = json.loads(f.read())
         self.characters_contract = self.w3.eth.contract(address=self.characters_address, abi=self.characters_abi)
+        # shields
+        self.shields_address = self.w3.toChecksumAddress(self.config['shields_address'])
+        with open(config['abi']['shields']) as f:
+            self.shields_abi = json.loads(f.read())
+        self.shields_contract = self.w3.eth.contract(address=self.shields_address, abi=self.shields_abi)
+        # market
+        self.market_address = self.w3.toChecksumAddress(self.config['market_address'])
+        with open(config['abi']['market']) as f:
+            self.market_abi = json.loads(f.read())
+        self.market_contract = self.w3.eth.contract(address=self.market_address, abi=self.market_abi)
         # raid
         self.raid_address = self.w3.toChecksumAddress(self.config['raid_address'])
         with open(config['abi']['raid']) as f:
@@ -53,6 +63,12 @@ class Cryptoblades:
         with open(config['abi']['oracle']) as f:
             self.oracle_abi = json.loads(f.read())
         self.oracle_contract = self.w3.eth.contract(address=self.oracle_address, abi=self.oracle_abi)
+
+    def get_block_by_number(self, block_number):
+        return self.w3.eth.get_block(block_number, full_transactions=True)
+
+    def decode_input_market(self, txn_input):
+        return self.market_contract.decode_function_input(txn_input)
 
     def get_vars(self, var, block='latest'):
         return self.cryptoblades_contract.functions.vars(var).call(block_identifier=block)
@@ -65,6 +81,9 @@ class Cryptoblades:
 
     def get_character_total_supply(self, block='latest'):
         return self.characters_contract.functions.totalSupply().call(block_identifier=block)
+
+    def get_character_level(self, character_id, block='latest'):
+        return self.characters_contract.functions.getLevel(character_id).call(block_identifier=block)
 
     def get_weapon_total_supply(self, block='latest'):
         return self.weapons_contract.functions.totalSupply().call(block_identifier=block)
@@ -89,3 +108,63 @@ class Cryptoblades:
 
     def get_fight_xp_gain(self, block='latest'):
         return self.cryptoblades_contract.functions.fightXpGain().call(block_identifier=block)
+
+    def get_market_tax(self, block='latest'):
+        return self.market_contract.functions.defaultTax().call(block_identifier=block)
+
+    def get_character_stats(self, character_id, block='latest'):
+        return self.characters_contract.functions.get(character_id).call(block_identifier=block)
+
+    def get_character_stamina(self, character_id, block='latest'):
+        return self.characters_contract.functions.getStaminaPoints(character_id).call(block_identifier=block)
+
+    def get_unclaimed_exp(self, character_id, block='latest'):
+        return self.cryptoblades_contract.functions.getXpRewards(character_id).call(block_identifier=block)
+
+    def get_weapon_trait(self, weapon_id, block='latest'):
+        return self.weapons_contract.functions.getTrait(weapon_id).call(block_identifier=block)
+
+    def get_weapon_stars(self, weapon_id, block='latest'):
+        return self.weapons_contract.functions.getStars(weapon_id).call(block_identifier=block)
+
+    def get_weapon_fight_data(self, weapon_id, character_trait, block='latest'):
+        return self.weapons_contract.functions.getFightData(weapon_id, character_trait).call(block_identifier=block)
+
+    def get_weapon_stats(self, weapon_id, block='latest'):
+        return self.weapons_contract.functions.get(weapon_id).call(block_identifier=block)
+
+    def get_weapon_pattern(self, weapon_id, block='latest'):
+        return self.weapons_contract.functions.getStatPattern(weapon_id).call(block_identifier=block)
+
+    def get_weapon_stat1_pattern(self, weapon_pattern, block='latest'):
+        return self.weapons_contract.functions.getStat1Trait(weapon_pattern).call(block_identifier=block)
+
+    def get_weapon_stat2_pattern(self, weapon_pattern, block='latest'):
+        return self.weapons_contract.functions.getStat2Trait(weapon_pattern).call(block_identifier=block)
+
+    def get_weapon_stat3_pattern(self, weapon_pattern, block='latest'):
+        return self.weapons_contract.functions.getStat3Trait(weapon_pattern).call(block_identifier=block)
+
+    def get_shield_stars(self, shield_id, block='latest'):
+        return self.shields_contract.functions.getStars(shield_id).call(block_identifier=block)
+
+    def get_shield_fight_data(self, shield_id, character_trait, block='latest'):
+        return self.shields_contract.functions.getFightData(shield_id, character_trait).call(block_identifier=block)
+
+    def get_shield_trait(self, shield_id, block='latest'):
+        return self.shields_contract.functions.getTrait(shield_id).call(block_identifier=block)
+
+    def get_shield_stats(self, shield_id, block='latest'):
+        return self.shields_contract.functions.get(shield_id).call(block_identifier=block)
+
+    def get_shield_pattern(self, shield_id, block='latest'):
+        return self.shields_contract.functions.getStatPattern(shield_id).call(block_identifier=block)
+
+    def get_shield_stat1_pattern(self, shield_pattern, block='latest'):
+        return self.shields_contract.functions.getStat1Trait(shield_pattern).call(block_identifier=block)
+
+    def get_shield_stat2_pattern(self, shield_pattern, block='latest'):
+        return self.shields_contract.functions.getStat2Trait(shield_pattern).call(block_identifier=block)
+
+    def get_shield_stat3_pattern(self, shield_pattern, block='latest'):
+        return self.shields_contract.functions.getStat3Trait(shield_pattern).call(block_identifier=block)
