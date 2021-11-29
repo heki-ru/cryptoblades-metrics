@@ -232,7 +232,7 @@ class Parser:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]}'
             stars = ':star:' * (d['weapon_stars'] + 1)
-            avg = f'({d["weapon_stats_dict"][1]} avg)'
+            avg = ''
         elif len(d['weapon_stats_dict']) == 4:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]} ' \
@@ -252,7 +252,7 @@ class Parser:
         else:
             stats = 'Wrong weapon stats '
             stars = f' {d["weapon_stars"] + 1}*'
-            avg = f'(0 avg)'
+            avg = f'(Unknown avg)'
             print('Wrong weapon stats', d['weapon_stats_dict'])
         webhook = DiscordWebhook(url=self.webhook_url_weapons,
                                  content=f'{pre} {status} {get_element(d["weapon_trait"])[0]}{stars} {d["weapon_id"]} '
