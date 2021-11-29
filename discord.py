@@ -227,7 +227,7 @@ class Parser:
         if d['weapon_bonus_power'] == 0:
             bp = ''
         else:
-            bp = f'Bonus Power: {d["weapon_bonus_power"]}'
+            bp = f'BP: {d["weapon_bonus_power"]}'
         if len(d['weapon_stats_dict']) == 2:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]}'
@@ -274,7 +274,7 @@ class Parser:
         if d['shield_bonus_power'] == 0:
             bp = ''
         else:
-            bp = f'Bonus Power: {d["shield_bonus_power"]}'
+            bp = f'BP: {d["shield_bonus_power"]}'
         if len(d['shield_stats_dict']) == 2:
             stats = f'{get_element(d["shield_stats_dict"][0])[0]}{get_element(d["shield_stats_dict"][0])[1]} ' \
                     f'+{d["shield_stats_dict"][1]}'
