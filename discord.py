@@ -256,7 +256,7 @@ class Parser:
             print('Wrong weapon stats', d['weapon_stats_dict'])
         webhook = DiscordWebhook(url=self.webhook_url_weapons,
                                  content=f'{pre} {status} {get_element(d["weapon_trait"])[0]}{stars} {d["weapon_id"]} '
-                                         f'{avg} -- {stats} '
+                                         f'-- {stats} {avg} '
                                          f'{bp} - **{d["weapon_price"]} SKILL**')
         webhook.execute()
 
