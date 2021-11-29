@@ -239,7 +239,7 @@ class Parser:
                     f'{get_element(d["weapon_stats_dict"][2])[0]}{get_element(d["weapon_stats_dict"][2])[1]} ' \
                     f'+{d["weapon_stats_dict"][3]}'
             stars = '<:orangestar:902186827232968764>' * (d['weapon_stars'] + 1)
-            avg = f'({(d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) / 2} avg)'
+            avg = f'({round((d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) / 2)} avg)'
         elif len(d['weapon_stats_dict']) == 6:
             stats = f'{get_element(d["weapon_stats_dict"][0])[0]}{get_element(d["weapon_stats_dict"][0])[1]} ' \
                     f'+{d["weapon_stats_dict"][1]} ' \
@@ -248,7 +248,7 @@ class Parser:
                     f'{get_element(d["weapon_stats_dict"][4])[0]}{get_element(d["weapon_stats_dict"][4])[1]} ' \
                     f'+{d["weapon_stats_dict"][5]}'
             stars = '<:redstar:902186790973210704>' * (d['weapon_stars'] + 1)
-            avg = f'({(d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) + d["weapon_stats_dict"][5] / 3} avg)'
+            avg = f'({round((d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3]) + d["weapon_stats_dict"][5] / 3)} avg)'
         else:
             stats = 'Wrong weapon stats '
             stars = f' {d["weapon_stars"] + 1}*'
