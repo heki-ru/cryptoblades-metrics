@@ -63,6 +63,11 @@ class Cryptoblades:
         with open(config['abi']['oracle']) as f:
             self.oracle_abi = json.loads(f.read())
         self.oracle_contract = self.w3.eth.contract(address=self.oracle_address, abi=self.oracle_abi)
+        # skill
+        self.skill_address = self.w3.toChecksumAddress(self.config['skill_address'])
+        with open(config['abi']['skill']) as f:
+            self.skill_abi = json.loads(f.read())
+        self.skill_contract = self.w3.eth.contract(address=self.skill_address, abi=self.skill_abi)
 
     def get_block_by_number(self, block_number):
         return self.w3.eth.get_block(block_number, full_transactions=True)
@@ -168,3 +173,6 @@ class Cryptoblades:
 
     def get_shield_stat3_pattern(self, shield_pattern, block='latest'):
         return self.shields_contract.functions.getStat3Trait(shield_pattern).call(block_identifier=block)
+
+    def get_skill_balance(self, address, block='latest'):
+        return self.skill_contract.functions.balanceOf(self.w3.toChecksumAddress(address)).call(block_identifier=block)

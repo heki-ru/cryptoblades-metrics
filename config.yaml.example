@@ -12,6 +12,7 @@ abi:
   market_abi: ./abi/market.abi
   raid: ./abi/raid.abi
   oracle: ./abi/oracle.abi
+  skill: ./abi/skill.abi
 bsc:
   path_http: http://localhost:8645/
   path_http_fallback: https://bsc-dataseed.binance.org/
@@ -22,6 +23,7 @@ bsc:
   market_address: '0x90099dA42806b21128A094C713347C7885aF79e2'
   raid_address: '0x1067d34D7bEBe2BE81657e8a2E3CFEBb0161F96b'
   oracle_address: '0x1CBFA0EC28dA66896946474B2A93856Eb725FbbA'
+  skill_address: '0x154A9F9cbd3449AD22FDaE23044319D6eF2a1Fab'
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -35,6 +37,7 @@ heco:
   market_address: '0x0f6dAA5F4b4277BE496c80aeCD0D101b8dEE6440'
   raid_address: '0x0aBb23EA06960608a4fa1529678C9abc208b4E8d'
   oracle_address: '0x4fa018401fFF54804caB82b19F3dABA64C30C238'
+  skill_address: '0x27d4DfDB3fDf58e198bA4dbc23B2F82c0b8e3405'
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -48,6 +51,7 @@ oec:
   market_address: '0x5ea2373e281E92FE3c53dc36cE855D89BF25F6F8'
   raid_address: '0x29F8917c2E6e6bAcc9FD813354bCBEd8A8dD89E3'
   oracle_address: '0xc72ef1f4bED83A5B60d74D01E10C4334a12d4d28'
+  skill_address: '0xcC137b0713E0DC63b1fA136272014F2A54Dd7aCB'
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -61,6 +65,7 @@ poly:
   market_address: '0xeE6e8467268eA752b027676B3EBcD4eB05749874'
   raid_address: '0x6F104F58fFFC13b66A1BD45AA228167c4ADf746F'
   oracle_address: '0x788A0cBDd8bbC5616998DaFF1cC836e253b6f04F'
+  skill_address: '0x863D6074aFaF02D9D41A5f8Ea83278DF7089aA86'
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -74,6 +79,7 @@ avax:
   market_address: '0x9469ED8d4b86e4442b4AA848bB94B9f9130f123E'
   raid_address: '0xbAC6B71a5bC3517Bee588299980B3C357a518e5C'
   oracle_address: '0xF1C976d354d206935a3191dbEeA5a8C2f5fD9BB8'
+  skill_address: '0x483416eB3aFA601B9C6385f63CeC0C82B6aBf1fb'
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''

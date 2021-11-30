@@ -51,6 +51,7 @@ class Metrics:
         self.raid_stamina = Gauge('cb_raid_stamina', 'stamina', labels)
         self.raid_durability = Gauge('cb_raid_durability', 'durability', labels)
         self.raid_xp = Gauge('cb_raid_xp', 'xp', labels)
+        self.reward_pool_skill = Gauge('cb_reward_pool_skill', 'balanceOf', labels)
 
     def update_metrics(self, cb, network, block):
         raid_data = cb.get_raid_data(block=block)
@@ -94,6 +95,7 @@ class Metrics:
         self.raid_stamina.labels(network).set(raid_data[8])
         self.raid_durability.labels(network).set(raid_data[9])
         self.raid_xp.labels(network).set(raid_data[10])
+        self.reward_pool_skill.labels(network).set(cb.w3.fromWei(cb.get_skill_balance(cb.cryptoblades_address, block=block), 'ether'))
         print(network, block)
 
     def block_parser(self, network):
