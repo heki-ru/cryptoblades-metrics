@@ -69,6 +69,9 @@ class Cryptoblades:
             self.skill_abi = json.loads(f.read())
         self.skill_contract = self.w3.eth.contract(address=self.skill_address, abi=self.skill_abi)
 
+    def get_latest_block_number(self):
+        return self.w3.eth.block_number
+
     def get_block_by_number(self, block_number):
         return self.w3.eth.get_block(block_number, full_transactions=True)
 

@@ -1,11 +1,9 @@
-import asyncio
 import json
 import threading
 import time
 
 import yaml
 from discord_webhook import DiscordWebhook
-from web3._utils.threads import Timeout
 from web3.exceptions import BlockNotFound, TransactionNotFound
 
 from cryptoblades import Cryptoblades
@@ -89,16 +87,14 @@ class Parser:
             self.exp_table = json.load(f)
 
     def block_filter(self):
+        block = self.cb.get_latest_block_number()
         while True:
             try:
-                block_filter = self.cb.w3.eth.filter('latest')
-                while True:
-                    args = block_filter.get_new_entries()
-                    asyncio.run(self.main(*args))
-                    time.sleep(1)
-            except (Timeout, ValueError) as err:
-                print(str(err))
+                self.get_block_txn(block)
+            except BlockNotFound:
                 time.sleep(1)
+                continue
+            block += 1
 
     def parse_character(self, character_id, character_price):
         character_price = float(self.cb.w3.fromWei(character_price, 'ether'))
@@ -304,103 +300,94 @@ class Parser:
         webhook.execute()
 
     def get_block_txn(self, block):
-        try:
-            block_txn = self.cb.get_block_by_number(block)
-            for txn in block_txn['transactions']:
-                for method in ['0x346710fd', '0xa6f95726', '0xed9999ca']:
-                    if method in txn['input'] and self.weapon_address in txn['input'] or \
-                            method in txn['input'] and self.shield_address in txn['input'] or \
-                            method in txn['input'] and self.character_address in txn['input']:
-                        txn_hash = txn['hash'].hex()
-                        try:
-                            status_check = self.cb.w3.eth.get_transaction_receipt(txn['hash'])
-                        except TransactionNotFound:
-                            return
-                        if status_check['status'] == 1:
-                            decoded_txn = self.cb.decode_input_market(txn['input'])[1]
-                            if method == '0x346710fd':
-                                if decoded_txn['_targetBuyer'] != '0x0000000000000000000000000000000000000000':
-                                    print(f'{self.network} - private trade for {decoded_txn["_targetBuyer"]} '
-                                          f'txn {txn_hash}')
-                                    break
-                                _id, price = decoded_txn['_id'], decoded_txn['_price']
-                                status = 'Listed'
-                            elif method == '0xa6f95726':
-                                _id, price = decoded_txn['_id'], decoded_txn['_maxPrice']
-                                status = 'Sold'
-                            elif method == '0xed9999ca':
-                                _id, price = decoded_txn['_id'], decoded_txn['_newPrice']
-                                status = 'Relisted'
+        block_txn = self.cb.get_block_by_number(block)
+        for txn in block_txn['transactions']:
+            for method in ['0x346710fd', '0xa6f95726', '0xed9999ca']:
+                if method in txn['input'] and self.weapon_address in txn['input'] or \
+                        method in txn['input'] and self.shield_address in txn['input'] or \
+                        method in txn['input'] and self.character_address in txn['input']:
+                    txn_hash = txn['hash'].hex()
+                    try:
+                        status_check = self.cb.w3.eth.get_transaction_receipt(txn['hash'])
+                    except TransactionNotFound:
+                        return
+                    if status_check['status'] == 1:
+                        decoded_txn = self.cb.decode_input_market(txn['input'])[1]
+                        if method == '0x346710fd':
+                            if decoded_txn['_targetBuyer'] != '0x0000000000000000000000000000000000000000':
+                                print(f'{self.network} {block} - private trade for {decoded_txn["_targetBuyer"]} '
+                                      f'txn {txn_hash}')
+                                break
+                            _id, price = decoded_txn['_id'], decoded_txn['_price']
+                            status = 'Listed'
+                        elif method == '0xa6f95726':
+                            _id, price = decoded_txn['_id'], decoded_txn['_maxPrice']
+                            status = 'Sold'
+                        elif method == '0xed9999ca':
+                            _id, price = decoded_txn['_id'], decoded_txn['_newPrice']
+                            status = 'Relisted'
+                        else:
+                            raise 'Wrong method'
+                        if decoded_txn['_tokenAddress'] == self.cb.characters_address:
+                            if method == '0xa6f95726':
+                                db = self.cb_db_sold_characters
                             else:
-                                raise 'Wrong method'
-                            if decoded_txn['_tokenAddress'] == self.cb.characters_address:
-                                if method == '0xa6f95726':
-                                    db = self.cb_db_sold_characters
-                                else:
-                                    db = self.cb_db_listed_characters
-                                d = self.parse_character(_id, price)
-                                db.replace_one({'id': d['character_id']},
-                                               {'id': d['character_id'],
-                                                'trait': d['character_trait'],
-                                                'price': d['character_price'],
-                                                'exp': d['character_exp'],
-                                                'u_exp': d['character_unclaimed_exp'],
-                                                'level': d['character_level'],
-                                                'value': d['character_value'],
-                                                'txn': txn_hash,
-                                                'time': int(time.time())}, True)
-                                print(f'{self.network} CBC {status} {d["character_id"]} {d["character_price"]} {txn_hash}')
-                                self.run_character_webhook(d, status)
-                            elif decoded_txn['_tokenAddress'] == self.cb.weapons_address:
-                                if method == '0xa6f95726':
-                                    db = self.cb_db_sold_weapons
-                                else:
-                                    db = self.cb_db_listed_weapons
-                                d = self.parse_weapon(_id, price)
-                                db.replace_one({'id': d['weapon_id']},
-                                               {'id': d['weapon_id'],
-                                                'trait': d['weapon_trait'],
-                                                'price': d['weapon_price'],
-                                                'stars': d['weapon_stars'],
-                                                'power': d['weapon_power'],
-                                                'value': d['weapon_value'],
-                                                'f_power': d['fight_weapon_power'],
-                                                'f_value': d['fight_weapon_value'],
-                                                'stats': d['weapon_stats_dict'],
-                                                'bonus': d['weapon_bonus_power'],
-                                                'txn': txn_hash,
-                                                'time': int(time.time())}, True)
-                                print(f'{self.network} CBW {status} {d["weapon_id"]} {d["weapon_price"]} {txn_hash}')
-                                self.run_weapon_webhook(d, status)
-                            elif decoded_txn['_tokenAddress'] == self.cb.shields_address:
-                                if method == '0xa6f95726':
-                                    db = self.cb_db_sold_shields
-                                else:
-                                    db = self.cb_db_listed_shields
-                                d = self.parse_shield(_id, price)
-                                db.replace_one({'id': d['shield_id']},
-                                               {'id': d['shield_id'],
-                                                'trait': d['shield_trait'],
-                                                'price': d['shield_price'],
-                                                'stars': d['shield_stars'],
-                                                'power': d['shield_power'],
-                                                'value': d['shield_value'],
-                                                'f_power': d['fight_shield_power'],
-                                                'f_value': d['fight_shield_value'],
-                                                'stats': d['shield_stats_dict'],
-                                                'bonus': d['shield_bonus_power'],
-                                                'txn': txn_hash,
-                                                'time': int(time.time())}, True)
-                                print(f'{self.network} CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
-                                self.run_shield_webhook(d, status)
-        except BlockNotFound:
-            pass
-
-    async def worker(self, block):
-        threading.Thread(target=self.get_block_txn, args=(block,), daemon=True).start()
-
-    async def main(self, *args):
-        await asyncio.gather(*(self.worker(block) for block in args))
+                                db = self.cb_db_listed_characters
+                            d = self.parse_character(_id, price)
+                            db.replace_one({'id': d['character_id']},
+                                           {'id': d['character_id'],
+                                            'trait': d['character_trait'],
+                                            'price': d['character_price'],
+                                            'exp': d['character_exp'],
+                                            'u_exp': d['character_unclaimed_exp'],
+                                            'level': d['character_level'],
+                                            'value': d['character_value'],
+                                            'txn': txn_hash,
+                                            'time': int(time.time())}, True)
+                            print(f'{self.network} {block} CBC {status} {d["character_id"]} {d["character_price"]} {txn_hash}')
+                            self.run_character_webhook(d, status)
+                        elif decoded_txn['_tokenAddress'] == self.cb.weapons_address:
+                            if method == '0xa6f95726':
+                                db = self.cb_db_sold_weapons
+                            else:
+                                db = self.cb_db_listed_weapons
+                            d = self.parse_weapon(_id, price)
+                            db.replace_one({'id': d['weapon_id']},
+                                           {'id': d['weapon_id'],
+                                            'trait': d['weapon_trait'],
+                                            'price': d['weapon_price'],
+                                            'stars': d['weapon_stars'],
+                                            'power': d['weapon_power'],
+                                            'value': d['weapon_value'],
+                                            'f_power': d['fight_weapon_power'],
+                                            'f_value': d['fight_weapon_value'],
+                                            'stats': d['weapon_stats_dict'],
+                                            'bonus': d['weapon_bonus_power'],
+                                            'txn': txn_hash,
+                                            'time': int(time.time())}, True)
+                            print(f'{self.network} {block} CBW {status} {d["weapon_id"]} {d["weapon_price"]} {txn_hash}')
+                            self.run_weapon_webhook(d, status)
+                        elif decoded_txn['_tokenAddress'] == self.cb.shields_address:
+                            if method == '0xa6f95726':
+                                db = self.cb_db_sold_shields
+                            else:
+                                db = self.cb_db_listed_shields
+                            d = self.parse_shield(_id, price)
+                            db.replace_one({'id': d['shield_id']},
+                                           {'id': d['shield_id'],
+                                            'trait': d['shield_trait'],
+                                            'price': d['shield_price'],
+                                            'stars': d['shield_stars'],
+                                            'power': d['shield_power'],
+                                            'value': d['shield_value'],
+                                            'f_power': d['fight_shield_power'],
+                                            'f_value': d['fight_shield_value'],
+                                            'stats': d['shield_stats_dict'],
+                                            'bonus': d['shield_bonus_power'],
+                                            'txn': txn_hash,
+                                            'time': int(time.time())}, True)
+                            print(f'{self.network} {block} CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
+                            self.run_shield_webhook(d, status)
 
 
 def run_threads():
