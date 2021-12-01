@@ -91,6 +91,7 @@ class Parser:
         while True:
             try:
                 self.get_block_txn(block)
+                print(self.network, block)
             except BlockNotFound:
                 time.sleep(1)
                 continue
