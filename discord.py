@@ -404,5 +404,5 @@ def run_threads():
 
 
 if __name__ == '__main__':
-    network_list = ['bsc', 'heco']
+    network_list = ['bsc', 'heco', 'oec']
     run_threads()
