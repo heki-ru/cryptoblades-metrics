@@ -68,6 +68,15 @@ class Cryptoblades:
         with open(config['abi']['skill']) as f:
             self.skill_abi = json.loads(f.read())
         self.skill_contract = self.w3.eth.contract(address=self.skill_address, abi=self.skill_abi)
+        # deployer
+        self.deployer_address = self.w3.toChecksumAddress(self.config['deployer_address'])
+        # raid_bot
+        self.raid_bot_address = self.w3.toChecksumAddress(self.config['raid_bot_address'])
+        # bridge_bot
+        self.bridge_bot_address = self.w3.toChecksumAddress(self.config['bridge_bot_address'])
+
+    def get_wallet_balance(self, address):
+        return self.w3.eth.getBalance(self.w3.toChecksumAddress(address))
 
     def get_latest_block_number(self):
         return self.w3.eth.block_number

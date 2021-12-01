@@ -52,6 +52,9 @@ class Metrics:
         self.raid_durability = Gauge('cb_raid_durability', 'durability', labels)
         self.raid_xp = Gauge('cb_raid_xp', 'xp', labels)
         self.reward_pool_skill = Gauge('cb_reward_pool_skill', 'balanceOf', labels)
+        self.deployer_wallet_balance = Gauge('cb_deployer_wallet_balance', '', labels)
+        self.raid_bot_wallet_balance = Gauge('cb_raid_bot_wallet_balance', '', labels)
+        self.bridge_bot_wallet_balance = Gauge('cb_bridge_bot_wallet_balance', '', labels)
 
     def update_metrics(self, cb, network, block):
         raid_data = cb.get_raid_data(block=block)
@@ -96,6 +99,9 @@ class Metrics:
         self.raid_durability.labels(network).set(raid_data[9])
         self.raid_xp.labels(network).set(raid_data[10])
         self.reward_pool_skill.labels(network).set(cb.w3.fromWei(cb.get_skill_balance(cb.cryptoblades_address, block=block), 'ether'))
+        self.deployer_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.deployer_address), 'ether'))
+        self.raid_bot_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.raid_bot_address), 'ether'))
+        self.bridge_bot_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.bridge_bot_address), 'ether'))
         print(network, block)
 
     def block_parser(self, network):
