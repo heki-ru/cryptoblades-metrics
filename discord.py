@@ -276,12 +276,14 @@ class Parser:
             stats = f'{get_element(d["shield_stats_dict"][0])[0]}{get_element(d["shield_stats_dict"][0])[1]} ' \
                     f'+{d["shield_stats_dict"][1]}'
             stars = ':star:' * (d['shield_stars'] + 1)
+            avg = ''
         elif len(d['shield_stats_dict']) == 4:
             stats = f'{get_element(d["shield_stats_dict"][0])[0]}{get_element(d["shield_stats_dict"][0])[1]} ' \
                     f'+{d["shield_stats_dict"][1]} ' \
                     f'{get_element(d["shield_stats_dict"][2])[0]}{get_element(d["shield_stats_dict"][2])[1]} ' \
                     f'+{d["shield_stats_dict"][3]}'
             stars = '<:orangestar:902186827232968764>' * (d['shield_stars'] + 1)
+            avg = f'({round((d["shield_stats_dict"][1] + d["shield_stats_dict"][3]) / 2)} avg)'
         elif len(d['shield_stats_dict']) == 6:
             stats = f'{get_element(d["shield_stats_dict"][0])[0]}{get_element(d["shield_stats_dict"][0])[1]} ' \
                     f'+{d["shield_stats_dict"][1]} ' \
@@ -290,13 +292,15 @@ class Parser:
                     f'{get_element(d["shield_stats_dict"][4])[0]}{get_element(d["shield_stats_dict"][4])[1]} ' \
                     f'+{d["shield_stats_dict"][5]}'
             stars = '<:redstar:902186790973210704>' * (d['shield_stars'] + 1)
+            avg = f'({round((d["shield_stats_dict"][1] + d["shield_stats_dict"][3] + d["shield_stats_dict"][5]) / 3)} avg)'
         else:
             stats = 'Wrong shield stats '
             stars = f' {d["shield_stars"] + 1}*'
+            avg = f'(Unknown avg)'
             print('Wrong shield stats', d['shield_stats_dict'])
         webhook = DiscordWebhook(url=self.webhook_url_shields,
                                  content=f'{pre} {status} {get_element(d["shield_trait"])[0]}{stars} {d["shield_id"]} '
-                                         f'-- {stats} '
+                                         f'-- {stats} {avg} '
                                          f'{bp} - **{d["shield_price"]} SKILL**')
         webhook.execute()
 
