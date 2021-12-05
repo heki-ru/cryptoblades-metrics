@@ -2,7 +2,7 @@ import threading
 from time import sleep
 
 from prometheus_client import start_http_server, Gauge
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError
 from web3.exceptions import BlockNotFound
 
 from cryptoblades import Cryptoblades
@@ -109,7 +109,7 @@ class Metrics:
             try:
                 cb = Cryptoblades(network=network)
                 block_info = cb.w3.eth.get_block('latest')
-            except ConnectionError as err:
+            except (ConnectionError, HTTPError) as err:
                 cb = Cryptoblades(network=network, fallback=True)
                 block_info = cb.w3.eth.get_block('latest')
                 print(f'Switched to fallback {network} {err}')
