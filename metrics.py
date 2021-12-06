@@ -119,7 +119,7 @@ class Metrics:
             except BlockNotFound as err:
                 print(f'{err}')
                 continue
-            sleep(15)
+            sleep(10)
 
     def run_threads(self):
         threads = []
