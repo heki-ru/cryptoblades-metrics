@@ -68,6 +68,8 @@ class Cryptoblades:
         with open(config['abi']['skill']) as f:
             self.skill_abi = json.loads(f.read())
         self.skill_contract = self.w3.eth.contract(address=self.skill_address, abi=self.skill_abi)
+        # bridge
+        self.bridge_address = self.w3.toChecksumAddress(self.config['bridge_address'])
         # deployer
         self.deployer_address = self.w3.toChecksumAddress(self.config['deployer_address'])
         # raid_bot
