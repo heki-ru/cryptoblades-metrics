@@ -4,7 +4,7 @@ import time
 import os.path
 import yaml
 from discord_webhook import DiscordWebhook
-from web3.exceptions import BlockNotFound, TransactionNotFound
+from web3.exceptions import TransactionNotFound
 
 from cryptoblades import Cryptoblades
 from db import DB
