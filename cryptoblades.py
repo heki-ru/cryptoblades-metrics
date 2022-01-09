@@ -134,6 +134,12 @@ class Cryptoblades:
     def get_target_buyer(self, token_address, token_id):
         return self.market_contract.functions.getTargetBuyer(self.w3.toChecksumAddress(token_address), token_id).call()
 
+    def check_market_ban(self, user_address):
+        return self.market_contract.functions.isUserBanned(self.w3.toChecksumAddress(user_address)).call()
+
+    def get_seller_price(self, token_address, token_id):
+        return self.market_contract.functions.getSellerPrice(self.w3.toChecksumAddress(token_address), token_id).call()
+
     def get_character_stats(self, character_id, block='latest'):
         return self.characters_contract.functions.get(character_id).call(block_identifier=block)
 
