@@ -96,7 +96,7 @@ class Parser:
             latest_block = self.cb.get_latest_block_number()
             with open(last_block_path) as f:
                 last_block = int(f.read())
-            if latest_block - 3 >= last_block:
+            if latest_block - 2 >= last_block:
                 self.get_block_txn(last_block)
                 with open(last_block_path, 'w') as f:
                     f.write(str(last_block + 1))
