@@ -1,7 +1,7 @@
 import json
 import threading
 import time
-
+import os.path
 import yaml
 from discord_webhook import DiscordWebhook
 from web3.exceptions import BlockNotFound, TransactionNotFound
@@ -87,15 +87,20 @@ class Parser:
             self.exp_table = json.load(f)
 
     def block_filter(self):
-        block = self.cb.get_latest_block_number()
+        last_block_path = f'{self.network}.latest'
+        if not os.path.exists(last_block_path):
+            latest_block = self.cb.get_latest_block_number()
+            with open(last_block_path, 'w') as f:
+                f.write(str(latest_block))
         while True:
-            try:
-                self.get_block_txn(block)
-            except BlockNotFound:
-                time.sleep(1)
-                continue
+            latest_block = self.cb.get_latest_block_number()
+            with open(last_block_path) as f:
+                last_block = int(f.read())
+            if latest_block - 3 >= last_block:
+                self.get_block_txn(last_block)
+                with open(last_block_path, 'w') as f:
+                    f.write(str(last_block + 1))
             time.sleep(1)
-            block += 1
 
     def parse_character(self, character_id, character_price):
         character_price = float(self.cb.w3.fromWei(character_price, 'ether'))
