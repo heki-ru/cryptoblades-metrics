@@ -332,7 +332,7 @@ class Parser:
                         decoded_txn = self.cb.decode_input_market(txn['input'])[1]
                         if method == '0x346710fd':
                             if decoded_txn['_targetBuyer'] != '0x0000000000000000000000000000000000000000':
-                                print(f'{self.network} {block} - private trade for {decoded_txn["_targetBuyer"]} '
+                                print(f'{self.network} {block} - private Listing for {decoded_txn["_targetBuyer"]} '
                                       f'txn {txn_hash}')
                                 break
                             _id, price = decoded_txn['_id'], decoded_txn['_price']
@@ -341,6 +341,11 @@ class Parser:
                             _id, price = decoded_txn['_id'], decoded_txn['_maxPrice']
                             status = 'Sold'
                         elif method == '0xed9999ca':
+                            target_buyer = self.cb.get_target_buyer(decoded_txn['_tokenAddress'], decoded_txn['_id'])
+                            if target_buyer != '0x0000000000000000000000000000000000000000':
+                                print(f'{self.network} {block} - private Relisting for {target_buyer} '
+                                      f'txn {txn_hash}')
+                                break
                             _id, price = decoded_txn['_id'], decoded_txn['_newPrice']
                             status = 'Relisted'
                         else:

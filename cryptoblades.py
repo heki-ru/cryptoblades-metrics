@@ -131,6 +131,9 @@ class Cryptoblades:
     def get_market_tax(self, block='latest'):
         return self.market_contract.functions.defaultTax().call(block_identifier=block)
 
+    def get_target_buyer(self, token_address, token_id):
+        return self.market_contract.functions.getTargetBuyer(self.w3.toChecksumAddress(token_address), token_id).call()
+
     def get_character_stats(self, character_id, block='latest'):
         return self.characters_contract.functions.get(character_id).call(block_identifier=block)
 
