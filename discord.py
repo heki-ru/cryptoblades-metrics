@@ -121,14 +121,14 @@ class Parser:
         weapon_price = float(self.cb.w3.fromWei(weapon_price, 'ether'))
         weapon_trait = self.cb.get_weapon_trait(weapon_id)
         weapon_stars = self.cb.get_weapon_stars(weapon_id)
-        w_data = self.cb.get_weapon_fight_data(weapon_id, weapon_trait)
-        weapon_power = w_data[0]
+        weapon_data = self.cb.get_weapon_fight_data(weapon_id, weapon_trait)
+        weapon_power = weapon_data[0]
         weapon_power = float(self.cb.w3.fromWei(weapon_power, 'ether'))
         weapon_value = weapon_price / weapon_power
-        fight_weapon_power = w_data[1]
+        fight_weapon_power = weapon_data[1]
         fight_weapon_power = float(self.cb.w3.fromWei(fight_weapon_power, 'ether'))
         fight_weapon_value = weapon_price / fight_weapon_power
-        weapon_bonus_power = w_data[2]
+        weapon_bonus_power = weapon_data[2]
         weapon_stats = self.cb.get_weapon_stats(weapon_id)
         weapon_pattern = self.cb.get_weapon_pattern(weapon_id)
         if 3 > weapon_stars >= 0:
@@ -139,7 +139,7 @@ class Parser:
             weapon_stat2_trait = self.cb.get_weapon_stat2_pattern(weapon_pattern)
             weapon_stats_dict = (weapon_stat1_trait, weapon_stats[1],
                                  weapon_stat2_trait, weapon_stats[2])
-        elif weapon_stars == 4:
+        elif weapon_stars == 4 or weapon_stars == 5:
             weapon_stat1_trait = self.cb.get_weapon_stat1_pattern(weapon_pattern)
             weapon_stat2_trait = self.cb.get_weapon_stat2_pattern(weapon_pattern)
             weapon_stat3_trait = self.cb.get_weapon_stat3_pattern(weapon_pattern)
@@ -244,7 +244,14 @@ class Parser:
                     f'+{d["weapon_stats_dict"][3]} ' \
                     f'{get_element(d["weapon_stats_dict"][4])[0]}{get_element(d["weapon_stats_dict"][4])[1]} ' \
                     f'+{d["weapon_stats_dict"][5]}'
-            stars = '<:redstar:902186790973210704>' * (d['weapon_stars'] + 1)
+            if d['weapon_stars'] == 4:
+                stars = '<:redstar:902186790973210704>' * (d['weapon_stars'] + 1)
+            elif d['weapon_stars'] == 5:
+                stars = '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>' + \
+                        '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>' + \
+                        '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>'
+            else:
+                stars = f' {d["weapon_stars"] + 1}*'
             avg = f'({round((d["weapon_stats_dict"][1] + d["weapon_stats_dict"][3] + d["weapon_stats_dict"][5]) / 3)} avg)'
         else:
             stats = 'Wrong weapon stats '
@@ -408,5 +415,5 @@ def run_threads():
 
 
 if __name__ == '__main__':
-    network_list = ['bsc', 'heco', 'oec', 'poly']
+    network_list = ['bsc', 'heco', 'oec', 'poly', 'avax']
     run_threads()

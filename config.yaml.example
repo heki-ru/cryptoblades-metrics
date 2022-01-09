@@ -9,7 +9,7 @@ abi:
   weapons: ./abi/weapons.abi
   characters: ./abi/characters.abi
   shields: ./abi/shields.abi
-  market_abi: ./abi/market.abi
+  market: ./abi/market.abi
   raid: ./abi/raid.abi
   oracle: ./abi/oracle.abi
   skill: ./abi/skill.abi
