@@ -13,6 +13,7 @@ abi:
   raid: ./abi/raid.abi
   oracle: ./abi/oracle.abi
   skill: ./abi/skill.abi
+  treasury: ./abi/treasury.abi
 bsc:
   path_http: http://localhost:8645/
   path_http_fallback: https://bsc-dataseed.binance.org/
@@ -28,6 +29,9 @@ bsc:
   deployer_address: ''
   raid_bot_address: ''
   bridge_bot_address: ''
+  treasury_address: ''
+  treasury_skill_id: null
+  treasury_king_id: null
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -46,6 +50,9 @@ heco:
   deployer_address: ''
   raid_bot_address: ''
   bridge_bot_address: ''
+  treasury_address: ''
+  treasury_skill_id: null
+  treasury_king_id: null
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -64,6 +71,9 @@ oec:
   deployer_address: ''
   raid_bot_address: ''
   bridge_bot_address: ''
+  treasury_address: ''
+  treasury_skill_id: null
+  treasury_king_id: null
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -82,6 +92,9 @@ poly:
   deployer_address: ''
   raid_bot_address: ''
   bridge_bot_address: ''
+  treasury_address: ''
+  treasury_skill_id: null
+  treasury_king_id: null
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -100,6 +113,9 @@ avax:
   deployer_address: ''
   raid_bot_address: ''
   bridge_bot_address: ''
+  treasury_address: ''
+  treasury_skill_id: null
+  treasury_king_id: null
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''

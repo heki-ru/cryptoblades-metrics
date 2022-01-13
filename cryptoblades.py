@@ -68,6 +68,11 @@ class Cryptoblades:
         with open(config['abi']['skill']) as f:
             self.skill_abi = json.loads(f.read())
         self.skill_contract = self.w3.eth.contract(address=self.skill_address, abi=self.skill_abi)
+        # treasury
+        self.treasury_address = self.w3.toChecksumAddress(self.config['treasury_address'])
+        with open(config['abi']['treasury']) as f:
+            self.treasury_abi = json.loads(f.read())
+        self.treasury_contract = self.w3.eth.contract(address=self.treasury_address, abi=self.treasury_abi)
         # bridge
         self.bridge_address = self.w3.toChecksumAddress(self.config['bridge_address'])
         # deployer
@@ -76,6 +81,10 @@ class Cryptoblades:
         self.raid_bot_address = self.w3.toChecksumAddress(self.config['raid_bot_address'])
         # bridge_bot
         self.bridge_bot_address = self.w3.toChecksumAddress(self.config['bridge_bot_address'])
+        # skill_treasury
+        self.treasury_skill_id = self.config['treasury_skill_id']
+        # king_treasury
+        self.treasury_king_id = self.config['treasury_king_id']
 
     def get_wallet_balance(self, address):
         return self.w3.eth.getBalance(self.w3.toChecksumAddress(address))
@@ -199,3 +208,9 @@ class Cryptoblades:
 
     def get_skill_balance(self, address, block='latest'):
         return self.skill_contract.functions.balanceOf(self.w3.toChecksumAddress(address)).call(block_identifier=block)
+
+    def get_treasury_multiplier(self, project_id, block='latest'):
+        return self.treasury_contract.functions.getProjectMultiplier(project_id).call(block_identifier=block)
+
+    def get_treasury_remaining_supply(self, project_id, block='latest'):
+        return self.treasury_contract.functions.getRemainingPartnerTokenSupply(project_id).call(block_identifier=block)

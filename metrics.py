@@ -56,6 +56,10 @@ class Metrics:
         self.deployer_wallet_balance = Gauge('cb_deployer_wallet_balance', '', labels)
         self.raid_bot_wallet_balance = Gauge('cb_raid_bot_wallet_balance', '', labels)
         self.bridge_bot_wallet_balance = Gauge('cb_bridge_bot_wallet_balance', '', labels)
+        self.treasury_skill_multiplier = Gauge('cb_treasury_skill_multiplier', '', labels)
+        self.treasury_king_multiplier = Gauge('cb_treasury_king_multiplier', '', labels)
+        self.treasury_skill_remaining_supply = Gauge('cb_treasury_skill_remaining_supply', '', labels)
+        self.treasury_king_remaining_supply = Gauge('cb_treasury_king_remaining_supply', '', labels)
 
     def update_metrics(self, cb, network, block):
         raid_data = cb.get_raid_data(block=block)
@@ -104,6 +108,11 @@ class Metrics:
         self.deployer_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.deployer_address), 'ether'))
         self.raid_bot_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.raid_bot_address), 'ether'))
         self.bridge_bot_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.bridge_bot_address), 'ether'))
+        self.treasury_skill_multiplier.labels(network).set(cb.w3.fromWei(cb.get_treasury_multiplier(cb.treasury_skill_id, block=block), 'ether'))
+        self.treasury_skill_remaining_supply.labels(network).set(cb.w3.fromWei(cb.get_treasury_remaining_supply(cb.treasury_skill_id, block=block), 'ether'))
+        if cb.treasury_king_id is not None:
+            self.treasury_king_multiplier.labels(network).set(cb.w3.fromWei(cb.get_treasury_multiplier(cb.treasury_king_id, block=block), 'ether'))
+            self.treasury_king_remaining_supply.labels(network).set(cb.w3.fromWei(cb.get_treasury_remaining_supply(cb.treasury_king_id, block=block), 'ether'))
         print(network, block)
 
     def block_parser(self, network):
