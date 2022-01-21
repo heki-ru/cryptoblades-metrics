@@ -73,6 +73,11 @@ class Cryptoblades:
         with open(config['abi']['treasury']) as f:
             self.treasury_abi = json.loads(f.read())
         self.treasury_contract = self.w3.eth.contract(address=self.treasury_address, abi=self.treasury_abi)
+        # pvp
+        self.pvp_address = self.w3.toChecksumAddress(self.config['pvp_address'])
+        with open(config['abi']['pvp']) as f:
+            self.pvp_abi = json.loads(f.read())
+        self.pvp_contract = self.w3.eth.contract(address=self.pvp_address, abi=self.pvp_abi)
         # bridge
         self.bridge_address = self.w3.toChecksumAddress(self.config['bridge_address'])
         # deployer
@@ -214,3 +219,6 @@ class Cryptoblades:
 
     def get_treasury_remaining_supply(self, project_id, block='latest'):
         return self.treasury_contract.functions.getRemainingPartnerTokenSupply(project_id).call(block_identifier=block)
+
+    def get_pvp_queue(self, block='latest'):
+        return self.pvp_contract.functions.getDuelQueue().call(block_identifier=block)

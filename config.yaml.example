@@ -14,6 +14,7 @@ abi:
   oracle: ./abi/oracle.abi
   skill: ./abi/skill.abi
   treasury: ./abi/treasury.abi
+  pvp: ./abi/pvp.abi
 bsc:
   path_http: http://localhost:8645/
   path_http_fallback: https://bsc-dataseed.binance.org/
@@ -32,6 +33,7 @@ bsc:
   treasury_address: ''
   treasury_skill_id: null
   treasury_king_id: null
+  pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -53,6 +55,7 @@ heco:
   treasury_address: ''
   treasury_skill_id: null
   treasury_king_id: null
+  pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -74,6 +77,7 @@ oec:
   treasury_address: ''
   treasury_skill_id: null
   treasury_king_id: null
+  pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -95,6 +99,7 @@ poly:
   treasury_address: ''
   treasury_skill_id: null
   treasury_king_id: null
+  pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
@@ -116,6 +121,7 @@ avax:
   treasury_address: ''
   treasury_skill_id: null
   treasury_king_id: null
+  pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
   webhook_url_shields: ''
