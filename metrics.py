@@ -60,7 +60,8 @@ class Metrics:
         self.treasury_king_multiplier = Gauge('cb_treasury_king_multiplier', '', labels)
         self.treasury_skill_remaining_supply = Gauge('cb_treasury_skill_remaining_supply', '', labels)
         self.treasury_king_remaining_supply = Gauge('cb_treasury_king_remaining_supply', '', labels)
-        self.pvp_queue = Gauge('cb_pvp_queue', '', labels)
+        self.pvp_queue = Gauge('cb_pvp_queue', 'getDuelQueue', labels)
+        self.pvp_tax_coffer = Gauge('cb_pvp_tax_coffer', 'gameCofferTaxDue', labels)
 
     def update_metrics(self, cb, network, block):
         raid_data = cb.get_raid_data(block=block)
@@ -116,6 +117,7 @@ class Metrics:
             self.treasury_king_remaining_supply.labels(network).set(cb.w3.fromWei(cb.get_treasury_remaining_supply(cb.treasury_king_id, block=block), 'ether'))
         if network == 'oec':
             self.pvp_queue.labels(network).set(len(cb.get_pvp_queue(block=block)))
+            self.pvp_tax_coffer.labels(network).set(cb.w3.fromWei(cb.get_pvp_tax_coffer(block=block), 'ether'))
         print(network, block)
 
     def block_parser(self, network):

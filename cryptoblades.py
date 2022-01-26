@@ -222,3 +222,6 @@ class Cryptoblades:
 
     def get_pvp_queue(self, block='latest'):
         return self.pvp_contract.functions.getDuelQueue().call(block_identifier=block)
+
+    def get_pvp_tax_coffer(self, block='latest'):
+        return self.pvp_contract.functions.gameCofferTaxDue().call(block_identifier=block)
