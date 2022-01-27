@@ -103,6 +103,9 @@ class Cryptoblades:
     def decode_input_market(self, txn_input):
         return self.market_contract.decode_function_input(txn_input)
 
+    def decode_input_cryptoblades(self, txn_input):
+        return self.cryptoblades_contract.decode_function_input(txn_input)
+
     def get_vars(self, var, block='latest'):
         return self.cryptoblades_contract.functions.vars(var).call(block_identifier=block)
 
