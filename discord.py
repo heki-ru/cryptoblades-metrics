@@ -115,7 +115,7 @@ class Parser:
         for character_xp in self.exp_table[:character_level]:
             character_total_exp += character_xp
         character_total_exp += character_current_exp
-        character_total_exp += character_unclaimed_exp
+        character_total_exp += character_unclaimed_exp[0]
         character_total_exp = 1 if character_total_exp == 0 else character_total_exp
         character_value = character_price / character_total_exp
         return {'character_id': character_id, 'character_trait': character_trait, 'character_price': character_price,
