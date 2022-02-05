@@ -163,14 +163,14 @@ class Parser:
         shield_price = float(self.cb.w3.fromWei(shield_price, 'ether'))
         shield_trait = self.cb.get_shield_trait(shield_id)
         shield_stars = self.cb.get_shield_stars(shield_id)
-        s_data = self.cb.get_shield_fight_data(shield_id, shield_trait)
-        shield_power = s_data[0]
+        shield_data = self.cb.get_shield_fight_data(shield_id, shield_trait)
+        shield_power = shield_data[0]
         shield_power = float(self.cb.w3.fromWei(shield_power, 'ether'))
         shield_value = shield_price / shield_power
-        fight_shield_power = s_data[1]
+        fight_shield_power = shield_data[1]
         fight_shield_power = float(self.cb.w3.fromWei(fight_shield_power, 'ether'))
         fight_shield_value = shield_price / fight_shield_power
-        shield_bonus_power = s_data[2]
+        shield_bonus_power = shield_data[2]
         shield_stats = self.cb.get_shield_stats(shield_id)
         shield_pattern = self.cb.get_shield_pattern(shield_id)
         if 3 > shield_stars >= 0:
@@ -181,7 +181,7 @@ class Parser:
             shield_stat2_trait = self.cb.get_shield_stat2_pattern(shield_pattern)
             shield_stats_dict = (shield_stat1_trait, shield_stats[1],
                                  shield_stat2_trait, shield_stats[2])
-        elif shield_stars == 4:
+        elif shield_stars == 4 or shield_stars == 5:
             shield_stat1_trait = self.cb.get_shield_stat1_pattern(shield_pattern)
             shield_stat2_trait = self.cb.get_shield_stat2_pattern(shield_pattern)
             shield_stat3_trait = self.cb.get_shield_stat3_pattern(shield_pattern)
@@ -303,7 +303,14 @@ class Parser:
                     f'+{d["shield_stats_dict"][3]} ' \
                     f'{get_element(d["shield_stats_dict"][4])[0]}{get_element(d["shield_stats_dict"][4])[1]} ' \
                     f'+{d["shield_stats_dict"][5]}'
-            stars = '<:redstar:902186790973210704>' * (d['shield_stars'] + 1)
+            if d['shield_stars'] == 4:
+                stars = '<:redstar:902186790973210704>' * (d['shield_stars'] + 1)
+            elif d['shield_stars'] == 5:
+                stars = '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>' + \
+                        '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>' + \
+                        '<:redstar:902186790973210704>' + '<:orangestar:902186827232968764>'
+            else:
+                stars = f' {d["shield_stars"] + 1}*'
             avg = f'({round((d["shield_stats_dict"][1] + d["shield_stats_dict"][3] + d["shield_stats_dict"][5]) / 3)} avg)'
         else:
             stats = 'Wrong shield stats '
