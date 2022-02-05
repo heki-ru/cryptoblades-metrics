@@ -163,6 +163,12 @@ class Cryptoblades:
     def get_character_stamina(self, character_id, block='latest'):
         return self.characters_contract.functions.getStaminaPoints(character_id).call(block_identifier=block)
 
+    def get_character_power(self, character_id, block='latest'):
+        return self.characters_contract.functions.getPower(character_id).call(block_identifier=block)
+
+    def get_character_total_power(self, character_id, block='latest'):
+        return self.characters_contract.functions.getTotalPower(character_id).call(block_identifier=block)
+
     def get_unclaimed_exp(self, character_id, block='latest'):
         return self.cryptoblades_contract.functions.getXpRewards([character_id]).call(block_identifier=block)[0]
 

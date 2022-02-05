@@ -108,6 +108,9 @@ class Parser:
         character_exp = character_info[0]
         character_level = character_info[1]
         character_trait = character_info[2]
+        character_power = self.cb.get_character_power(character_id)
+        character_total_power = self.cb.get_character_total_power(character_id)
+        character_bonus_power = character_total_power - character_power
         character_stamina = self.cb.get_character_stamina(character_id)
         character_current_exp = character_exp
         character_unclaimed_exp = self.cb.get_unclaimed_exp(character_id)
@@ -120,7 +123,9 @@ class Parser:
         character_value = character_price / character_total_exp
         return {'character_id': character_id, 'character_trait': character_trait, 'character_price': character_price,
                 'character_exp': character_exp, 'character_level': character_level, 'character_value': character_value,
-                'character_stamina': character_stamina, 'character_unclaimed_exp': character_unclaimed_exp}
+                'character_stamina': character_stamina, 'character_unclaimed_exp': character_unclaimed_exp,
+                'character_power': character_power, 'character_total_power': character_total_power,
+                'character_bonus_power': character_bonus_power}
 
     def parse_weapon(self, weapon_id, weapon_price):
         weapon_price = float(self.cb.w3.fromWei(weapon_price, 'ether'))
@@ -211,6 +216,7 @@ class Parser:
                                  content=f'{pre} {status} {get_element(d["character_trait"])[0]} {d["character_id"]} '
                                          f'-- {d["character_level"] + 1} lvl, '
                                          f'{d["character_exp"]}+{d["character_unclaimed_exp"]} exp, '
+                                         f'{d["character_power"]}+{d["character_bonus_power"]} power, '
                                          f'{d["character_stamina"]}/200 sta '
                                          f'- **{d["character_price"]} SKILL**')
         webhook.execute()
