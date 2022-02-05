@@ -345,7 +345,14 @@ class Parser:
                             _id, price = decoded_txn['_id'], decoded_txn['_price']
                             status = 'Listed'
                         elif method == '0xa6f95726':
-                            _id, price = decoded_txn['_id'], decoded_txn['_maxPrice']
+                            _id = decoded_txn['_id']
+                            price = 0
+                            txn_receipt = self.cb.w3.eth.get_transaction_receipt(txn_hash)
+                            for log in txn_receipt['logs']:
+                                if log['topics'][0].hex() == '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' and \
+                                        log['address'] == self.cb.skill_address:
+                                    price += int(log['data'], 16)
+                            price += 1
                             status = 'Sold'
                         elif method == '0xed9999ca':
                             target_buyer = self.cb.get_target_buyer(decoded_txn['_tokenAddress'], decoded_txn['_id'])
