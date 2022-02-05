@@ -332,7 +332,11 @@ class Parser:
     def get_block_txn(self, block):
         block_txn = self.cb.get_block_by_number(block)
         for txn in block_txn['transactions']:
-            for method in ['0x346710fd', '0xa6f95726', '0xed9999ca']:
+            # 0x346710fd addListing
+            # 0xed9999ca changeListingPrice
+            # 0xa6f95726 purchaseListing
+            # 0x9642b3f7 purchaseBurnCharacter
+            for method in ['0x346710fd', '0xed9999ca', '0xa6f95726', '0x9642b3f7']:
                 if method in txn['input'] and self.weapon_address in txn['input'] or \
                         method in txn['input'] and self.shield_address in txn['input'] or \
                         method in txn['input'] and self.character_address in txn['input']:
@@ -350,14 +354,18 @@ class Parser:
                                 break
                             _id, price = decoded_txn['_id'], decoded_txn['_price']
                             status = 'Listed'
-                        elif method == '0xa6f95726':
+                        elif method == '0xa6f95726' or method == '0x9642b3f7':
                             _id = decoded_txn['_id']
                             price = 0
+                            i = 1
                             txn_receipt = self.cb.w3.eth.get_transaction_receipt(txn_hash)
                             for log in txn_receipt['logs']:
                                 if log['topics'][0].hex() == '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' and \
                                         log['address'] == self.cb.skill_address:
                                     price += int(log['data'], 16)
+                                    i += 1
+                                    if i > 2:
+                                        break
                             price += 1
                             status = 'Sold'
                         elif method == '0xed9999ca':
