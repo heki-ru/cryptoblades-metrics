@@ -446,6 +446,7 @@ def run_webhook(webhook):
     while True:
         try:
             webhook.execute()
+            break
         except requests.exceptions.ConnectionError as err:
             print(f'{err}')
             time.sleep(2)
