@@ -2,6 +2,8 @@ import json
 import threading
 import time
 import os.path
+
+import requests
 import yaml
 from discord_webhook import DiscordWebhook
 from web3.exceptions import TransactionNotFound
@@ -219,7 +221,7 @@ class Parser:
                                          f'{d["character_power"]}+{d["character_bonus_power"]} power, '
                                          f'{d["character_stamina"]}/200 sta '
                                          f'- **{d["character_price"]} SKILL**')
-        webhook.execute()
+        run_webhook(webhook)
 
     def run_weapon_webhook(self, d, status):
         pre = ''
@@ -273,7 +275,7 @@ class Parser:
                                  content=f'{pre} {status} {get_element(d["weapon_trait"])[0]}{stars} {d["weapon_id"]} '
                                          f'-- {stats} {avg} '
                                          f'{bp} - **{d["weapon_price"]} SKILL**')
-        webhook.execute()
+        run_webhook(webhook)
 
     def run_shield_webhook(self, d, status):
         pre = ''
@@ -327,7 +329,7 @@ class Parser:
                                  content=f'{pre} {status} {get_element(d["shield_trait"])[0]}{stars} {d["shield_id"]} '
                                          f'-- {stats} {avg} '
                                          f'{bp} - **{d["shield_price"]} SKILL**')
-        webhook.execute()
+        run_webhook(webhook)
 
     def get_block_txn(self, block):
         block_txn = self.cb.get_block_by_number(block)
@@ -438,6 +440,15 @@ class Parser:
                                             'time': int(time.time())}, True)
                             print(f'{self.network} {block} CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
                             self.run_shield_webhook(d, status)
+
+
+def run_webhook(webhook):
+    while True:
+        try:
+            webhook.execute()
+        except requests.exceptions.ConnectionError as err:
+            print(f'{err}')
+            time.sleep(2)
 
 
 def run_threads():
