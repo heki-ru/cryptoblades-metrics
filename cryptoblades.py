@@ -187,15 +187,6 @@ class Cryptoblades:
     def get_weapon_pattern(self, weapon_id, block='latest'):
         return self.weapons_contract.functions.getStatPattern(weapon_id).call(block_identifier=block)
 
-    def get_weapon_stat1_pattern(self, weapon_pattern, block='latest'):
-        return self.weapons_contract.functions.getStat1Trait(weapon_pattern).call(block_identifier=block)
-
-    def get_weapon_stat2_pattern(self, weapon_pattern, block='latest'):
-        return self.weapons_contract.functions.getStat2Trait(weapon_pattern).call(block_identifier=block)
-
-    def get_weapon_stat3_pattern(self, weapon_pattern, block='latest'):
-        return self.weapons_contract.functions.getStat3Trait(weapon_pattern).call(block_identifier=block)
-
     def get_shield_stars(self, shield_id, block='latest'):
         return self.shields_contract.functions.getStars(shield_id).call(block_identifier=block)
 
@@ -210,15 +201,6 @@ class Cryptoblades:
 
     def get_shield_pattern(self, shield_id, block='latest'):
         return self.shields_contract.functions.getStatPattern(shield_id).call(block_identifier=block)
-
-    def get_shield_stat1_pattern(self, shield_pattern, block='latest'):
-        return self.shields_contract.functions.getStat1Trait(shield_pattern).call(block_identifier=block)
-
-    def get_shield_stat2_pattern(self, shield_pattern, block='latest'):
-        return self.shields_contract.functions.getStat2Trait(shield_pattern).call(block_identifier=block)
-
-    def get_shield_stat3_pattern(self, shield_pattern, block='latest'):
-        return self.shields_contract.functions.getStat3Trait(shield_pattern).call(block_identifier=block)
 
     def get_skill_balance(self, address, block='latest'):
         return self.skill_contract.functions.balanceOf(self.w3.toChecksumAddress(address)).call(block_identifier=block)

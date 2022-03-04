@@ -144,17 +144,17 @@ class Parser:
         weapon_stats = self.cb.get_weapon_stats(weapon_id)
         weapon_pattern = self.cb.get_weapon_pattern(weapon_id)
         if 3 > weapon_stars >= 0:
-            weapon_stat1_trait = self.cb.get_weapon_stat1_pattern(weapon_pattern)
+            weapon_stat1_trait = int(weapon_pattern % 5)
             weapon_stats_dict = (weapon_stat1_trait, weapon_stats[1])
         elif weapon_stars == 3:
-            weapon_stat1_trait = self.cb.get_weapon_stat1_pattern(weapon_pattern)
-            weapon_stat2_trait = self.cb.get_weapon_stat2_pattern(weapon_pattern)
+            weapon_stat1_trait = int(weapon_pattern % 5)
+            weapon_stat2_trait = int((weapon_pattern / 5) % 5)
             weapon_stats_dict = (weapon_stat1_trait, weapon_stats[1],
                                  weapon_stat2_trait, weapon_stats[2])
         elif weapon_stars == 4 or weapon_stars == 5:
-            weapon_stat1_trait = self.cb.get_weapon_stat1_pattern(weapon_pattern)
-            weapon_stat2_trait = self.cb.get_weapon_stat2_pattern(weapon_pattern)
-            weapon_stat3_trait = self.cb.get_weapon_stat3_pattern(weapon_pattern)
+            weapon_stat1_trait = int(weapon_pattern % 5)
+            weapon_stat2_trait = int((weapon_pattern / 5) % 5)
+            weapon_stat3_trait = int((weapon_pattern / 25) % 5)
             weapon_stats_dict = (weapon_stat1_trait, weapon_stats[1],
                                  weapon_stat2_trait, weapon_stats[2],
                                  weapon_stat3_trait, weapon_stats[3])
@@ -181,17 +181,17 @@ class Parser:
         shield_stats = self.cb.get_shield_stats(shield_id)
         shield_pattern = self.cb.get_shield_pattern(shield_id)
         if 3 > shield_stars >= 0:
-            shield_stat1_trait = self.cb.get_shield_stat1_pattern(shield_pattern)
+            shield_stat1_trait = int(shield_pattern % 5)
             shield_stats_dict = (shield_stat1_trait, shield_stats[1])
         elif shield_stars == 3:
-            shield_stat1_trait = self.cb.get_shield_stat1_pattern(shield_pattern)
-            shield_stat2_trait = self.cb.get_shield_stat2_pattern(shield_pattern)
+            shield_stat1_trait = int(shield_pattern % 5)
+            shield_stat2_trait = int((shield_pattern / 5) % 5)
             shield_stats_dict = (shield_stat1_trait, shield_stats[1],
                                  shield_stat2_trait, shield_stats[2])
         elif shield_stars == 4 or shield_stars == 5:
-            shield_stat1_trait = self.cb.get_shield_stat1_pattern(shield_pattern)
-            shield_stat2_trait = self.cb.get_shield_stat2_pattern(shield_pattern)
-            shield_stat3_trait = self.cb.get_shield_stat3_pattern(shield_pattern)
+            shield_stat1_trait = int(shield_pattern % 5)
+            shield_stat2_trait = int((shield_pattern / 5) % 5)
+            shield_stat3_trait = int((shield_pattern / 25) % 5)
             shield_stats_dict = (shield_stat1_trait, shield_stats[1],
                                  shield_stat2_trait, shield_stats[2],
                                  shield_stat3_trait, shield_stats[3])
