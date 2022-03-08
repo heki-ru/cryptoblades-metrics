@@ -88,8 +88,6 @@ class Cryptoblades:
         self.bridge_bot_address = self.w3.toChecksumAddress(self.config['bridge_bot_address'])
         # skill_treasury
         self.treasury_skill_id = self.config['treasury_skill_id']
-        # king_treasury
-        self.treasury_king_id = self.config['treasury_king_id']
 
     def get_wallet_balance(self, address):
         return self.w3.eth.getBalance(self.w3.toChecksumAddress(address))

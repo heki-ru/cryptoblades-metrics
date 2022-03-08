@@ -57,9 +57,7 @@ class Metrics:
         self.raid_bot_wallet_balance = Gauge('cb_raid_bot_wallet_balance', '', labels)
         self.bridge_bot_wallet_balance = Gauge('cb_bridge_bot_wallet_balance', '', labels)
         self.treasury_skill_multiplier = Gauge('cb_treasury_skill_multiplier', '', labels)
-        self.treasury_king_multiplier = Gauge('cb_treasury_king_multiplier', '', labels)
         self.treasury_skill_remaining_supply = Gauge('cb_treasury_skill_remaining_supply', '', labels)
-        self.treasury_king_remaining_supply = Gauge('cb_treasury_king_remaining_supply', '', labels)
         self.pvp_queue = Gauge('cb_pvp_queue', 'getDuelQueue', labels)
         self.pvp_tax_coffer = Gauge('cb_pvp_tax_coffer', 'gameCofferTaxDue', labels)
 
@@ -112,9 +110,6 @@ class Metrics:
         self.bridge_bot_wallet_balance.labels(network).set(cb.w3.fromWei(cb.get_wallet_balance(cb.bridge_bot_address), 'ether'))
         self.treasury_skill_multiplier.labels(network).set(cb.w3.fromWei(cb.get_treasury_multiplier(cb.treasury_skill_id, block=block), 'ether'))
         self.treasury_skill_remaining_supply.labels(network).set(cb.w3.fromWei(cb.get_treasury_remaining_supply(cb.treasury_skill_id, block=block), 'ether'))
-        if cb.treasury_king_id is not None:
-            self.treasury_king_multiplier.labels(network).set(cb.w3.fromWei(cb.get_treasury_multiplier(cb.treasury_king_id, block=block), 'ether'))
-            self.treasury_king_remaining_supply.labels(network).set(cb.w3.fromWei(cb.get_treasury_remaining_supply(cb.treasury_king_id, block=block), 'ether'))
         if network == 'oec':
             self.pvp_queue.labels(network).set(len(cb.get_pvp_queue(block=block)))
             self.pvp_tax_coffer.labels(network).set(cb.w3.fromWei(cb.get_pvp_tax_coffer(block=block), 'ether'))

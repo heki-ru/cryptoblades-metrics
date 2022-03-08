@@ -32,7 +32,6 @@ bsc:
   bridge_bot_address: ''
   treasury_address: ''
   treasury_skill_id: null
-  treasury_king_id: null
   pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
@@ -54,7 +53,6 @@ heco:
   bridge_bot_address: ''
   treasury_address: ''
   treasury_skill_id: null
-  treasury_king_id: null
   pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
@@ -76,7 +74,6 @@ oec:
   bridge_bot_address: ''
   treasury_address: ''
   treasury_skill_id: null
-  treasury_king_id: null
   pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
@@ -98,7 +95,6 @@ poly:
   bridge_bot_address: ''
   treasury_address: ''
   treasury_skill_id: null
-  treasury_king_id: null
   pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
@@ -120,7 +116,6 @@ avax:
   bridge_bot_address: ''
   treasury_address: ''
   treasury_skill_id: null
-  treasury_king_id: null
   pvp_address: ''
   webhook_url_characters: ''
   webhook_url_weapons: ''
