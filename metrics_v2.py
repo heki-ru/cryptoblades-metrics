@@ -40,15 +40,15 @@ class Metrics:
 
     def parse_quest(self, last_block):
         quest_registry = CollectorRegistry()
-        quest_assigned_metric = Gauge('cb_quest_assigned', 'QuestAssigned',
-                                      ['network', 'tier', 'quest', 'character', 'user', 'block', 'hash'],
-                                      registry=quest_registry)
         quest_complete_metric = Gauge('cb_quest_complete', 'QuestComplete',
                                       ['network', 'tier', 'quest', 'character', 'user', 'block', 'hash'],
                                       registry=quest_registry)
         quest_skipped_metric = Gauge('cb_quest_skipped', 'QuestSkipped',
                                      ['network', 'tier', 'quest', 'character', 'user', 'block', 'hash'],
                                      registry=quest_registry)
+        quest_assigned_metric = Gauge('cb_quest_assigned', 'QuestAssigned',
+                                      ['network', 'tier', 'quest', 'character', 'user', 'block', 'hash'],
+                                      registry=quest_registry)
         quest_weekly_reward_metric = Gauge('cb_quest_weekly_reward_claimed', 'WeeklyRewardClaimed',
                                            ['network', 'user', 'block', 'hash'], registry=quest_registry)
         _txn_hash = None
@@ -58,22 +58,13 @@ class Metrics:
             txn_hash = log['transactionHash']
             if txn_hash != _txn_hash:
                 txn_receipt = self.cb.w3.eth.get_transaction_receipt(txn_hash)
-                quest_assigned = self.cb.quests_contract.events.QuestAssigned().processReceipt(txn_receipt)
-                if quest_assigned:
-                    quest = quest_assigned[0]['args']['questID']
-                    character = quest_assigned[0]['args']['characterID']
-                    tier = self.cb.get_quests(quest)[1]
-                    user = txn_receipt['from']
-                    print(self.network, 'QuestAssigned')
-                    quest_assigned_metric.labels(self.network, tier, quest, character,
-                                                 user, last_block, txn_hash.hex()).inc()
                 quest_complete = self.cb.quests_contract.events.QuestComplete().processReceipt(txn_receipt)
                 if quest_complete:
                     quest = quest_complete[0]['args']['questID']
                     character = quest_complete[0]['args']['characterID']
                     tier = self.cb.get_quests(quest)[1]
                     user = txn_receipt['from']
-                    print(self.network, 'QuestComplete')
+                    print(self.network, 'QuestComplete', last_block)
                     quest_complete_metric.labels(self.network, tier, quest, character,
                                                  user, last_block, txn_hash.hex()).inc()
                 quest_skipped = self.cb.quests_contract.events.QuestSkipped().processReceipt(txn_receipt)
@@ -82,13 +73,22 @@ class Metrics:
                     character = quest_skipped[0]['args']['characterID']
                     tier = self.cb.get_quests(quest)[1]
                     user = txn_receipt['from']
-                    print(self.network, 'QuestSkipped')
+                    print(self.network, 'QuestSkipped', last_block)
                     quest_skipped_metric.labels(self.network, tier, quest, character,
                                                 user, last_block, txn_hash.hex()).inc()
                 weekly_reward_claimed = self.cb.quests_contract.events.WeeklyRewardClaimed().processReceipt(txn_receipt)
+                quest_assigned = self.cb.quests_contract.events.QuestAssigned().processReceipt(txn_receipt)
+                if quest_assigned:
+                    quest = quest_assigned[0]['args']['questID']
+                    character = quest_assigned[0]['args']['characterID']
+                    tier = self.cb.get_quests(quest)[1]
+                    user = txn_receipt['from']
+                    print(self.network, 'QuestAssigned', last_block)
+                    quest_assigned_metric.labels(self.network, tier, quest, character,
+                                                 user, last_block, txn_hash.hex()).inc()
                 if weekly_reward_claimed:
                     user = txn_receipt['from']
-                    print(self.network, 'WeeklyRewardClaimed')
+                    print(self.network, 'WeeklyRewardClaimed', last_block)
                     quest_weekly_reward_metric.labels(self.network, user, last_block, txn_hash.hex()).inc()
             _txn_hash = txn_hash
         return quest_registry
