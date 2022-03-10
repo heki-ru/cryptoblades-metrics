@@ -78,6 +78,11 @@ class Cryptoblades:
         with open(config['abi']['pvp']) as f:
             self.pvp_abi = json.loads(f.read())
         self.pvp_contract = self.w3.eth.contract(address=self.pvp_address, abi=self.pvp_abi)
+        # quests
+        self.quests_address = self.w3.toChecksumAddress(self.config['quests_address'])
+        with open(config['abi']['quests']) as f:
+            self.quests_abi = json.loads(f.read())
+        self.quests_contract = self.w3.eth.contract(address=self.quests_address, abi=self.quests_abi)
         # bridge
         self.bridge_address = self.w3.toChecksumAddress(self.config['bridge_address'])
         # deployer
@@ -214,3 +219,6 @@ class Cryptoblades:
 
     def get_pvp_tax_coffer(self, block='latest'):
         return self.pvp_contract.functions.gameCofferTaxDue().call(block_identifier=block)
+
+    def get_quests(self, quest_id):
+        return self.quests_contract.functions.quests(quest_id).call()
