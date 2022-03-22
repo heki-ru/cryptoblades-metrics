@@ -91,6 +91,8 @@ class Cryptoblades:
         self.raid_bot_address = self.w3.toChecksumAddress(self.config['raid_bot_address'])
         # bridge_bot
         self.bridge_bot_address = self.w3.toChecksumAddress(self.config['bridge_bot_address'])
+        # bridge_bot
+        self.pvp_bot_address = self.w3.toChecksumAddress(self.config['pvp_bot_address'])
         # skill_treasury
         self.treasury_skill_id = self.config['treasury_skill_id']
 
