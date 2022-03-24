@@ -91,7 +91,7 @@ class Cryptoblades:
         self.raid_bot_address = self.w3.toChecksumAddress(self.config['raid_bot_address'])
         # bridge_bot
         self.bridge_bot_address = self.w3.toChecksumAddress(self.config['bridge_bot_address'])
-        # bridge_bot
+        # pvp_bot
         self.pvp_bot_address = self.w3.toChecksumAddress(self.config['pvp_bot_address'])
         # skill_treasury
         self.treasury_skill_id = self.config['treasury_skill_id']
@@ -216,11 +216,14 @@ class Cryptoblades:
     def get_treasury_remaining_supply(self, project_id, block='latest'):
         return self.treasury_contract.functions.getRemainingPartnerTokenSupply(project_id).call(block_identifier=block)
 
-    def get_pvp_queue(self, block='latest'):
-        return self.pvp_contract.functions.getDuelQueue().call(block_identifier=block)
-
-    def get_pvp_tax_coffer(self, block='latest'):
-        return self.pvp_contract.functions.gameCofferTaxDue().call(block_identifier=block)
-
     def get_quests(self, quest_id):
         return self.quests_contract.functions.quests(quest_id).call()
+
+    def ether(self, wei: int) -> float:
+        return float(self.w3.fromWei(wei, 'ether'))
+
+    def wei(self, ether: float) -> int:
+        return int(self.w3.toWei(ether, 'ether'))
+
+    def gwei(self, ether: float) -> int:
+        return int(self.w3.toWei(ether, 'gwei'))
