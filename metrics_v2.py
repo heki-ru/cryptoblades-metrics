@@ -39,7 +39,7 @@ class Metrics:
                     self.push_to_vm(quests_data, timestamp)
                     pvp_data = self.parse_pvp(last_block)
                     self.push_to_vm(pvp_data, timestamp)
-                if latest_block - last_block <= 10:
+                if latest_block - last_block <= 15:
                     calls_data = self.parse_calls(last_block)
                     self.push_to_vm(calls_data, timestamp)
                 self.metrics_db.update_one({'network': self.network}, {'$set': {'last_block': last_block + 1}})
