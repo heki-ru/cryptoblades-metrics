@@ -5,6 +5,8 @@ import warnings
 from multicall import Call, Multicall
 from prometheus_client import Gauge, CollectorRegistry
 from prometheus_client.exposition import default_handler, generate_latest, CONTENT_TYPE_LATEST
+from requests.exceptions import RequestException
+from retry_decorator import retry
 
 from cryptoblades import Cryptoblades
 from db import DB
@@ -23,6 +25,7 @@ class Metrics:
         self.job = 'cryptoblades'
         self.instance = 'metrics_v2'
 
+    @retry(RequestException, tries=720, timeout_secs=5)
     def block_filter(self):
         while True:
             latest_block = self.cb.get_latest_block_number()
