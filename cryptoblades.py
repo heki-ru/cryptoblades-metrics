@@ -95,6 +95,14 @@ class Cryptoblades:
         self.pvp_bot_address = self.w3.toChecksumAddress(self.config['pvp_bot_address'])
         # skill_treasury
         self.treasury_skill_id = self.config['treasury_skill_id']
+        if network == 'bsc':
+            # king
+            self.king_address = self.w3.toChecksumAddress(self.config['king_address'])
+            with open(config['abi']['king']) as f:
+                self.king_abi = json.loads(f.read())
+            self.king_contract = self.w3.eth.contract(address=self.king_address, abi=self.king_abi)
+            # king tax
+            self.king_tax_address = self.w3.toChecksumAddress(self.config['king_tax_address'])
 
     def get_wallet_balance(self, address):
         return self.w3.eth.getBalance(self.w3.toChecksumAddress(address))
@@ -216,8 +224,8 @@ class Cryptoblades:
     def get_treasury_remaining_supply(self, project_id, block='latest'):
         return self.treasury_contract.functions.getRemainingPartnerTokenSupply(project_id).call(block_identifier=block)
 
-    def get_quests(self, quest_id):
-        return self.quests_contract.functions.quests(quest_id).call()
+    def get_quests(self, quest_id, block='latest'):
+        return self.quests_contract.functions.quests(quest_id).call(block_identifier=block)
 
     def ether(self, wei: int) -> float:
         return float(self.w3.fromWei(wei, 'ether'))
