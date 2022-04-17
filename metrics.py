@@ -38,7 +38,8 @@ class Metrics:
                 block_info = self.cb.w3.eth.get_block(last_block)
                 timestamp = block_info['timestamp']
                 events_data = self.events(last_block)
-                self.push_to_vm(events_data, timestamp)
+                if events_data:
+                    self.push_to_vm(events_data, timestamp)
                 if latest_block - last_block <= 15:
                     calls_data = self.calls(last_block)
                     self.push_to_vm(calls_data, timestamp)
@@ -46,56 +47,6 @@ class Metrics:
             time.sleep(0.5)
 
     def events(self, last_block):
-        events_registry = CollectorRegistry()
-        # quests
-        quest_complete_metric = Gauge('cb_quest_complete', 'QuestComplete',
-                                      ['network', 'tier', 'quest', 'character',
-                                       'user', 'block', 'hash'],
-                                      registry=events_registry)
-        quest_skipped_metric = Gauge('cb_quest_skipped', 'QuestSkipped',
-                                     ['network', 'tier', 'quest', 'character',
-                                      'user', 'block', 'hash'],
-                                     registry=events_registry)
-        quest_assigned_metric = Gauge('cb_quest_assigned', 'QuestAssigned',
-                                      ['network', 'tier', 'quest', 'character',
-                                       'user', 'block', 'hash'],
-                                      registry=events_registry)
-        quest_weekly_reward_metric = Gauge('cb_quest_weekly_reward_claimed', 'WeeklyRewardClaimed',
-                                           ['network', 'user', 'block', 'hash'],
-                                           registry=events_registry)
-        # pvp
-        pvp_duel_finished_metric = Gauge('cb_pvp_duel_finished', 'DuelFinished',
-                                         ['network', 'attacker', 'defender',
-                                          'attacker_roll', 'defender_roll',
-                                          'attacker_won', 'bonus_rank', 'block', 'hash'],
-                                         registry=events_registry)
-        # characters
-        character_minted_metric = Gauge('cb_character_minted', 'NewCharacter',
-                                        ['network', 'character',
-                                         'user', 'block', 'hash'],
-                                        registry=events_registry)
-        character_burned_metric = Gauge('cb_character_burned', 'Burned',
-                                        ['network', 'character', 'character_level',
-                                         'user', 'block', 'hash'],
-                                        registry=events_registry)
-        # weapons
-        weapon_minted_metric = Gauge('cb_weapon_minted', 'NewWeapon',
-                                     ['network', 'weapon', 'weapon_stars', 'weapon_type',
-                                      'user', 'block', 'hash'],
-                                     registry=events_registry)
-        weapon_burned_metric = Gauge('cb_weapon_burned', 'Burned',
-                                     ['network', 'weapon', 'weapon_stars',
-                                      'user', 'block', 'hash'],
-                                     registry=events_registry)
-        # shields
-        shield_minted_metric = Gauge('cb_shield_minted', 'NewShield',
-                                     ['network', 'shield', 'shield_stars',
-                                      'user', 'block', 'hash'],
-                                     registry=events_registry)
-        shield_burned_metric = Gauge('cb_shield_burned', 'Burned',
-                                     ['network', 'shield', 'shield_stars',
-                                      'user', 'block', 'hash'],
-                                     registry=events_registry)
         contracts = [self.cb.quests_address,
                      self.cb.pvp_address,
                      self.cb.characters_address,
@@ -105,127 +56,178 @@ class Metrics:
             contracts.remove(self.cb.pvp_address)
         logs = self.cb.w3.eth.get_logs({'fromBlock': last_block, 'toBlock': last_block,
                                         'address': contracts})
-        _txn_hash = None
-        for log in logs:
-            txn_hash = log['transactionHash']
-            if txn_hash != _txn_hash:
-                txn_receipt = self.cb.w3.eth.get_transaction_receipt(txn_hash)
-                addresses = []
-                for address in txn_receipt['logs']:
-                    addresses.append(address['address'])
-                # quests
-                if self.cb.quests_address in addresses:
-                    quest_complete = self.cb.quests_contract.events.QuestComplete().processReceipt(txn_receipt)
-                    if quest_complete:
-                        for event in quest_complete:
-                            quest = event['args']['questID']
-                            character = event['args']['characterID']
-                            tier = self.cb.get_quests(quest)[1]
+        if logs:
+            events_registry = CollectorRegistry()
+            # quests
+            quest_complete_metric = Gauge('cb_quest_complete', 'QuestComplete',
+                                          ['network', 'tier', 'quest', 'character',
+                                           'user', 'block', 'hash'],
+                                          registry=events_registry)
+            quest_skipped_metric = Gauge('cb_quest_skipped', 'QuestSkipped',
+                                         ['network', 'tier', 'quest', 'character',
+                                          'user', 'block', 'hash'],
+                                         registry=events_registry)
+            quest_assigned_metric = Gauge('cb_quest_assigned', 'QuestAssigned',
+                                          ['network', 'tier', 'quest', 'character',
+                                           'user', 'block', 'hash'],
+                                          registry=events_registry)
+            quest_weekly_reward_metric = Gauge('cb_quest_weekly_reward_claimed', 'WeeklyRewardClaimed',
+                                               ['network', 'user', 'block', 'hash'],
+                                               registry=events_registry)
+            # pvp
+            pvp_duel_finished_metric = Gauge('cb_pvp_duel_finished', 'DuelFinished',
+                                             ['network', 'attacker', 'defender',
+                                              'attacker_roll', 'defender_roll',
+                                              'attacker_won', 'bonus_rank', 'block', 'hash'],
+                                             registry=events_registry)
+            # characters
+            character_minted_metric = Gauge('cb_character_minted', 'NewCharacter',
+                                            ['network', 'character',
+                                             'user', 'block', 'hash'],
+                                            registry=events_registry)
+            character_burned_metric = Gauge('cb_character_burned', 'Burned',
+                                            ['network', 'character', 'character_level',
+                                             'user', 'block', 'hash'],
+                                            registry=events_registry)
+            # weapons
+            weapon_minted_metric = Gauge('cb_weapon_minted', 'NewWeapon',
+                                         ['network', 'weapon', 'weapon_stars', 'weapon_type',
+                                          'user', 'block', 'hash'],
+                                         registry=events_registry)
+            weapon_burned_metric = Gauge('cb_weapon_burned', 'Burned',
+                                         ['network', 'weapon', 'weapon_stars',
+                                          'user', 'block', 'hash'],
+                                         registry=events_registry)
+            # shields
+            shield_minted_metric = Gauge('cb_shield_minted', 'NewShield',
+                                         ['network', 'shield', 'shield_stars',
+                                          'user', 'block', 'hash'],
+                                         registry=events_registry)
+            shield_burned_metric = Gauge('cb_shield_burned', 'Burned',
+                                         ['network', 'shield', 'shield_stars',
+                                          'user', 'block', 'hash'],
+                                         registry=events_registry)
+            _txn_hash = None
+            for log in logs:
+                txn_hash = log['transactionHash']
+                if txn_hash != _txn_hash:
+                    txn_receipt = self.cb.w3.eth.get_transaction_receipt(txn_hash)
+                    addresses = []
+                    for address in txn_receipt['logs']:
+                        addresses.append(address['address'])
+                    # quests
+                    if self.cb.quests_address in addresses:
+                        quest_complete = self.cb.quests_contract.events.QuestComplete().processReceipt(txn_receipt)
+                        if quest_complete:
+                            for event in quest_complete:
+                                quest = event['args']['questID']
+                                character = event['args']['characterID']
+                                tier = self.cb.get_quests(quest)[1]
+                                user = txn_receipt['from']
+                                print(self.network, last_block, 'QuestComplete')
+                                quest_complete_metric.labels(self.network, tier, quest, character,
+                                                             user, last_block, txn_hash.hex()).inc()
+                        quest_skipped = self.cb.quests_contract.events.QuestSkipped().processReceipt(txn_receipt)
+                        if quest_skipped:
+                            for event in quest_skipped:
+                                quest = event['args']['questID']
+                                character = event['args']['characterID']
+                                tier = self.cb.get_quests(quest)[1]
+                                user = txn_receipt['from']
+                                print(self.network, last_block, 'QuestSkipped')
+                                quest_skipped_metric.labels(self.network, tier, quest, character,
+                                                            user, last_block, txn_hash.hex()).inc()
+                        quest_assigned = self.cb.quests_contract.events.QuestAssigned().processReceipt(txn_receipt)
+                        if quest_assigned:
+                            for event in quest_assigned:
+                                quest = event['args']['questID']
+                                character = event['args']['characterID']
+                                tier = self.cb.get_quests(quest)[1]
+                                user = txn_receipt['from']
+                                print(self.network, last_block, 'QuestAssigned')
+                                quest_assigned_metric.labels(self.network, tier, quest, character,
+                                                             user, last_block, txn_hash.hex()).inc()
+                        weekly_reward_claimed = self.cb.quests_contract.events.WeeklyRewardClaimed().processReceipt(txn_receipt)
+                        if weekly_reward_claimed:
                             user = txn_receipt['from']
-                            print(self.network, last_block, 'QuestComplete')
-                            quest_complete_metric.labels(self.network, tier, quest, character,
-                                                         user, last_block, txn_hash.hex()).inc()
-                    quest_skipped = self.cb.quests_contract.events.QuestSkipped().processReceipt(txn_receipt)
-                    if quest_skipped:
-                        for event in quest_skipped:
-                            quest = event['args']['questID']
-                            character = event['args']['characterID']
-                            tier = self.cb.get_quests(quest)[1]
-                            user = txn_receipt['from']
-                            print(self.network, last_block, 'QuestSkipped')
-                            quest_skipped_metric.labels(self.network, tier, quest, character,
-                                                        user, last_block, txn_hash.hex()).inc()
-                    quest_assigned = self.cb.quests_contract.events.QuestAssigned().processReceipt(txn_receipt)
-                    if quest_assigned:
-                        for event in quest_assigned:
-                            quest = event['args']['questID']
-                            character = event['args']['characterID']
-                            tier = self.cb.get_quests(quest)[1]
-                            user = txn_receipt['from']
-                            print(self.network, last_block, 'QuestAssigned')
-                            quest_assigned_metric.labels(self.network, tier, quest, character,
-                                                         user, last_block, txn_hash.hex()).inc()
-                    weekly_reward_claimed = self.cb.quests_contract.events.WeeklyRewardClaimed().processReceipt(txn_receipt)
-                    if weekly_reward_claimed:
-                        user = txn_receipt['from']
-                        print(self.network, last_block, 'WeeklyRewardClaimed')
-                        quest_weekly_reward_metric.labels(self.network, user, last_block, txn_hash.hex()).inc()
-                # pvp
-                if self.cb.pvp_address in addresses:
-                    pvp_duel_finished = self.cb.pvp_contract.events.DuelFinished().processReceipt(txn_receipt)
-                    if pvp_duel_finished:
-                        for event in pvp_duel_finished:
-                            attacker = event['args']['attacker']
-                            defender = event['args']['defender']
-                            attacker_roll = event['args']['attackerRoll']
-                            defender_roll = event['args']['defenderRoll']
-                            attacker_won = event['args']['attackerWon']
-                            bonus_rank = event['args']['bonusRank']
-                            print(self.network, last_block, 'DuelFinished')
-                            pvp_duel_finished_metric.labels(self.network, attacker, defender,
-                                                            attacker_roll, defender_roll,
-                                                            attacker_won, bonus_rank, last_block, txn_hash.hex()).inc()
-                # characters
-                if self.cb.characters_address in addresses:
-                    character_minted = self.cb.characters_contract.events.NewCharacter().processReceipt(txn_receipt)
-                    if character_minted:
-                        for event in character_minted:
-                            character = event['args']['character']
-                            user = event['args']['minter']
-                            print(self.network, last_block, 'NewCharacter')
-                            character_minted_metric.labels(self.network, character, user, last_block, txn_hash.hex()).inc()
-                    character_burned = self.cb.characters_contract.events.Burned().processReceipt(txn_receipt)
-                    if character_burned:
-                        for event in character_burned:
-                            character = event['args']['id']
-                            character_level = self.cb.get_character_level(character)
-                            user = event['args']['owner']
-                            print(self.network, last_block, 'Burned (character)')
-                            character_burned_metric.labels(self.network, character, character_level,
-                                                           user, last_block, txn_hash.hex()).inc()
-                # weapons
-                if self.cb.weapons_address in addresses:
-                    weapon_minted = self.cb.weapons_contract.events.NewWeapon().processReceipt(txn_receipt)
-                    if weapon_minted:
-                        for event in weapon_minted:
-                            weapon = event['args']['weapon']
-                            weapon_stars = self.cb.get_weapon_stars(weapon)
-                            weapon_type = event['args']['weaponType']
-                            user = event['args']['minter']
-                            print(self.network, last_block, 'NewWeapon')
-                            weapon_minted_metric.labels(self.network, weapon, weapon_stars, weapon_type,
-                                                        user, last_block, txn_hash.hex()).inc()
-                    weapon_burned = self.cb.weapons_contract.events.Burned().processReceipt(txn_receipt)
-                    if weapon_burned:
-                        for event in weapon_burned:
-                            weapon = event['args']['burned']
-                            weapon_stars = self.cb.get_weapon_stars(weapon)
-                            user = event['args']['owner']
-                            print(self.network, last_block, 'Burned (weapon)')
-                            weapon_burned_metric.labels(self.network, weapon, weapon_stars,
-                                                        user, last_block, txn_hash.hex()).inc()
-                # shields
-                if self.cb.shields_address in addresses:
-                    shield_minted = self.cb.shields_contract.events.NewShield().processReceipt(txn_receipt)
-                    if shield_minted:
-                        for event in shield_minted:
-                            shield = event['args']['shield']
-                            shield_stars = self.cb.get_shield_stars(shield)
-                            user = event['args']['minter']
-                            print(self.network, last_block, 'NewShield')
-                            shield_minted_metric.labels(self.network, shield, shield_stars,
-                                                        user, last_block, txn_hash.hex()).inc()
-                    shield_burned = self.cb.shields_contract.events.Burned().processReceipt(txn_receipt)
-                    if shield_burned:
-                        for event in shield_burned:
-                            shield = event['args']['shield']
-                            shield_stars = self.cb.get_shield_stars(shield)
-                            user = event['args']['burner']
-                            print(self.network, last_block, 'Burned (shield)')
-                            shield_burned_metric.labels(self.network, shield, shield_stars,
-                                                        user, last_block, txn_hash.hex()).inc()
-            _txn_hash = txn_hash
-        return events_registry
+                            print(self.network, last_block, 'WeeklyRewardClaimed')
+                            quest_weekly_reward_metric.labels(self.network, user, last_block, txn_hash.hex()).inc()
+                    # pvp
+                    if self.cb.pvp_address in addresses:
+                        pvp_duel_finished = self.cb.pvp_contract.events.DuelFinished().processReceipt(txn_receipt)
+                        if pvp_duel_finished:
+                            for event in pvp_duel_finished:
+                                attacker = event['args']['attacker']
+                                defender = event['args']['defender']
+                                attacker_roll = event['args']['attackerRoll']
+                                defender_roll = event['args']['defenderRoll']
+                                attacker_won = event['args']['attackerWon']
+                                bonus_rank = event['args']['bonusRank']
+                                print(self.network, last_block, 'DuelFinished')
+                                pvp_duel_finished_metric.labels(self.network, attacker, defender,
+                                                                attacker_roll, defender_roll,
+                                                                attacker_won, bonus_rank, last_block, txn_hash.hex()).inc()
+                    # characters
+                    if self.cb.characters_address in addresses:
+                        character_minted = self.cb.characters_contract.events.NewCharacter().processReceipt(txn_receipt)
+                        if character_minted:
+                            for event in character_minted:
+                                character = event['args']['character']
+                                user = event['args']['minter']
+                                print(self.network, last_block, 'NewCharacter')
+                                character_minted_metric.labels(self.network, character, user, last_block, txn_hash.hex()).inc()
+                        character_burned = self.cb.characters_contract.events.Burned().processReceipt(txn_receipt)
+                        if character_burned:
+                            for event in character_burned:
+                                character = event['args']['id']
+                                character_level = self.cb.get_character_level(character)
+                                user = event['args']['owner']
+                                print(self.network, last_block, 'Burned (character)')
+                                character_burned_metric.labels(self.network, character, character_level,
+                                                               user, last_block, txn_hash.hex()).inc()
+                    # weapons
+                    if self.cb.weapons_address in addresses:
+                        weapon_minted = self.cb.weapons_contract.events.NewWeapon().processReceipt(txn_receipt)
+                        if weapon_minted:
+                            for event in weapon_minted:
+                                weapon = event['args']['weapon']
+                                weapon_stars = self.cb.get_weapon_stars(weapon)
+                                weapon_type = event['args']['weaponType']
+                                user = event['args']['minter']
+                                print(self.network, last_block, 'NewWeapon')
+                                weapon_minted_metric.labels(self.network, weapon, weapon_stars, weapon_type,
+                                                            user, last_block, txn_hash.hex()).inc()
+                        weapon_burned = self.cb.weapons_contract.events.Burned().processReceipt(txn_receipt)
+                        if weapon_burned:
+                            for event in weapon_burned:
+                                weapon = event['args']['burned']
+                                weapon_stars = self.cb.get_weapon_stars(weapon)
+                                user = event['args']['owner']
+                                print(self.network, last_block, 'Burned (weapon)')
+                                weapon_burned_metric.labels(self.network, weapon, weapon_stars,
+                                                            user, last_block, txn_hash.hex()).inc()
+                    # shields
+                    if self.cb.shields_address in addresses:
+                        shield_minted = self.cb.shields_contract.events.NewShield().processReceipt(txn_receipt)
+                        if shield_minted:
+                            for event in shield_minted:
+                                shield = event['args']['shield']
+                                shield_stars = self.cb.get_shield_stars(shield)
+                                user = event['args']['minter']
+                                print(self.network, last_block, 'NewShield')
+                                shield_minted_metric.labels(self.network, shield, shield_stars,
+                                                            user, last_block, txn_hash.hex()).inc()
+                        shield_burned = self.cb.shields_contract.events.Burned().processReceipt(txn_receipt)
+                        if shield_burned:
+                            for event in shield_burned:
+                                shield = event['args']['shield']
+                                shield_stars = self.cb.get_shield_stars(shield)
+                                user = event['args']['burner']
+                                print(self.network, last_block, 'Burned (shield)')
+                                shield_burned_metric.labels(self.network, shield, shield_stars,
+                                                            user, last_block, txn_hash.hex()).inc()
+                _txn_hash = txn_hash
+            return events_registry
 
     def calls(self, last_block):
         calls_registry = CollectorRegistry()
