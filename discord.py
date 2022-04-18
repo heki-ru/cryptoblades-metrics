@@ -123,11 +123,12 @@ class Parser:
         character_total_exp += character_unclaimed_exp
         character_total_exp = 1 if character_total_exp == 0 else character_total_exp
         character_value = character_price / character_total_exp
+        character_rep = self.cb.get_character_vars(character_id, 103)
         return {'character_id': character_id, 'character_trait': character_trait, 'character_price': character_price,
                 'character_exp': character_exp, 'character_level': character_level, 'character_value': character_value,
                 'character_stamina': character_stamina, 'character_unclaimed_exp': character_unclaimed_exp,
                 'character_power': character_power, 'character_total_power': character_total_power,
-                'character_bonus_power': character_bonus_power}
+                'character_bonus_power': character_bonus_power, 'character_rep': character_rep}
 
     def parse_weapon(self, weapon_id, weapon_price):
         weapon_price = float(self.cb.w3.fromWei(weapon_price, 'ether'))
@@ -219,6 +220,7 @@ class Parser:
                                          f'-- {d["character_level"] + 1} lvl, '
                                          f'{d["character_exp"]}+{d["character_unclaimed_exp"]} exp, '
                                          f'{d["character_power"]}+{d["character_bonus_power"]} power, '
+                                         f'{d["character_rep"]} rep, '
                                          f'{d["character_stamina"]}/200 sta '
                                          f'- **{d["character_price"]} SKILL**')
         run_webhook(webhook)

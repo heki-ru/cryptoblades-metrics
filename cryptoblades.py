@@ -134,6 +134,9 @@ class Cryptoblades:
     def get_character_level(self, character_id, block='latest'):
         return self.characters_contract.functions.getLevel(character_id).call(block_identifier=block)
 
+    def get_character_vars(self, character_id, var):
+        return self.characters_contract.functions.nftVars(character_id, var).call()
+
     def get_weapon_total_supply(self, block='latest'):
         return self.weapons_contract.functions.totalSupply().call(block_identifier=block)
 
