@@ -398,6 +398,7 @@ class Parser:
                                             'time': int(time.time())}, True)
                             print(f'{self.network} {block} CBC {status} {d["character_id"]} {d["character_price"]} {txn_hash}')
                             self.run_character_webhook(d, status)
+                            time.sleep(1)
                         elif decoded_txn['_tokenAddress'] == self.cb.weapons_address:
                             if method == '0xa6f95726':
                                 db = self.cb_db_sold_weapons
@@ -419,6 +420,7 @@ class Parser:
                                             'time': int(time.time())}, True)
                             print(f'{self.network} {block} CBW {status} {d["weapon_id"]} {d["weapon_price"]} {txn_hash}')
                             self.run_weapon_webhook(d, status)
+                            time.sleep(1)
                         elif decoded_txn['_tokenAddress'] == self.cb.shields_address:
                             if method == '0xa6f95726':
                                 db = self.cb_db_sold_shields
@@ -440,6 +442,7 @@ class Parser:
                                             'time': int(time.time())}, True)
                             print(f'{self.network} {block} CBS {status} {d["shield_id"]} {d["shield_price"]} {txn_hash}')
                             self.run_shield_webhook(d, status)
+                            time.sleep(1)
 
 
 def run_webhook(webhook):
