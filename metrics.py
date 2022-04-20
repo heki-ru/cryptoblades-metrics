@@ -293,45 +293,45 @@ class Metrics:
         var_param_hourly_pay_allowance_metric = Gauge('cb_var_param_hourly_pay_allowance',
                                                       'VAR_PARAM_HOURLY_PAY_ALLOWANCE',
                                                       ['network'], registry=calls_registry)
-        # var_mint_weapon_fee_decrease_speed_metric = Gauge('cb_var_mint_weapon_fee_decrease_speed',
-        #                                                   'VAR_MINT_WEAPON_FEE_DECREASE_SPEED',
-        #                                                   ['network'], registry=calls_registry)
-        # var_mint_character_fee_decrease_speed_metric = Gauge('cb_var_mint_character_fee_decrease_speed',
-        #                                                      'VAR_MINT_CHARACTER_FEE_DECREASE_SPEED',
-        #                                                      ['network'], registry=calls_registry)
-        # var_weapon_fee_increase_metric = Gauge('cb_var_weapon_fee_increase',
-        #                                        'VAR_WEAPON_FEE_INCREASE',
-        #                                        ['network'], registry=calls_registry)
-        # var_character_fee_increase_metric = Gauge('cb_var_character_fee_increase',
-        #                                           'VAR_CHARACTER_FEE_INCREASE',
-        #                                           ['network'], registry=calls_registry)
-        # var_min_weapon_fee_metric = Gauge('cb_var_min_weapon_fee',
-        #                                   'VAR_MIN_WEAPON_FEE',
-        #                                   ['network'], registry=calls_registry)
-        # var_min_character_fee_metric = Gauge('cb_var_min_character_fee',
-        #                                      'VAR_MIN_CHARACTER_FEE',
-        #                                      ['network'], registry=calls_registry)
-        # var_weapon_mint_timestamp_metric = Gauge('cb_var_weapon_mint_timestamp',
-        #                                          'VAR_WEAPON_MINT_TIMESTAMP',
-        #                                          ['network'], registry=calls_registry)
-        # var_character_mint_timestamp_metric = Gauge('cb_var_character_mint_timestamp',
-        #                                             'VAR_CHARACTER_MINT_TIMESTAMP',
-        #                                             ['network'], registry=calls_registry)
+        var_mint_weapon_fee_decrease_speed_metric = Gauge('cb_var_mint_weapon_fee_decrease_speed',
+                                                          'VAR_MINT_WEAPON_FEE_DECREASE_SPEED',
+                                                          ['network'], registry=calls_registry)
+        var_mint_character_fee_decrease_speed_metric = Gauge('cb_var_mint_character_fee_decrease_speed',
+                                                             'VAR_MINT_CHARACTER_FEE_DECREASE_SPEED',
+                                                             ['network'], registry=calls_registry)
+        var_weapon_fee_increase_metric = Gauge('cb_var_weapon_fee_increase',
+                                               'VAR_WEAPON_FEE_INCREASE',
+                                               ['network'], registry=calls_registry)
+        var_character_fee_increase_metric = Gauge('cb_var_character_fee_increase',
+                                                  'VAR_CHARACTER_FEE_INCREASE',
+                                                  ['network'], registry=calls_registry)
+        var_min_weapon_fee_metric = Gauge('cb_var_min_weapon_fee',
+                                          'VAR_MIN_WEAPON_FEE',
+                                          ['network'], registry=calls_registry)
+        var_min_character_fee_metric = Gauge('cb_var_min_character_fee',
+                                             'VAR_MIN_CHARACTER_FEE',
+                                             ['network'], registry=calls_registry)
+        var_weapon_mint_timestamp_metric = Gauge('cb_var_weapon_mint_timestamp',
+                                                 'VAR_WEAPON_MINT_TIMESTAMP',
+                                                 ['network'], registry=calls_registry)
+        var_character_mint_timestamp_metric = Gauge('cb_var_character_mint_timestamp',
+                                                    'VAR_CHARACTER_MINT_TIMESTAMP',
+                                                    ['network'], registry=calls_registry)
         fight_xp_gain_metric = Gauge('cb_fight_xp_gain',
                                      'fightXpGain',
                                      ['network'], registry=calls_registry)
         mint_character_fee_usd_metric = Gauge('cb_mint_character_fee_usd',
                                               'mintCharacterFee',
                                               ['network'], registry=calls_registry)
-        # mint_character_fee_dynamic_usd_metric = Gauge('cb_mint_character_fee_dynamic_usd',
-        #                                               'getMintCharacterFee',
-        #                                               ['network'], registry=calls_registry)
+        mint_character_fee_dynamic_usd_metric = Gauge('cb_mint_character_fee_dynamic_usd',
+                                                      'getMintCharacterFee',
+                                                      ['network'], registry=calls_registry)
         mint_weapon_fee_usd_metric = Gauge('cb_mint_weapon_fee_usd',
                                            'mintWeaponFee',
                                            ['network'], registry=calls_registry)
-        # mint_weapon_fee_dynamic_usd_metric = Gauge('cb_mint_weapon_fee_dynamic_usd',
-        #                                            'getMintWeaponFee',
-        #                                            ['network'], registry=calls_registry)
+        mint_weapon_fee_dynamic_usd_metric = Gauge('cb_mint_weapon_fee_dynamic_usd',
+                                                   'getMintWeaponFee',
+                                                   ['network'], registry=calls_registry)
         reforge_weapon_fee_usd_metric = Gauge('cb_reforge_weapon_fee_usd',
                                               'reforgeWeaponFee',
                                               ['network'], registry=calls_registry)
@@ -452,32 +452,32 @@ class Metrics:
                                [['var_param_significant_hour_fights', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 18],
                                [['var_param_hourly_pay_allowance', self.cb.ether]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 19],
-        #                        [['var_mint_weapon_fee_decrease_speed', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 20],
-        #                        [['var_mint_character_fee_decrease_speed', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 21],
-        #                        [['var_weapon_fee_increase', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 22],
-        #                        [['var_character_fee_increase', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 23],
-        #                        [['var_min_weapon_fee', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 24],
-        #                        [['var_min_character_fee', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 25],
-        #                        [['var_weapon_mint_timestamp', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 26],
-        #                        [['var_character_mint_timestamp', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 19],
+                               [['var_mint_weapon_fee_decrease_speed', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 20],
+                               [['var_mint_character_fee_decrease_speed', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 21],
+                               [['var_weapon_fee_increase', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 22],
+                               [['var_character_fee_increase', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 23],
+                               [['var_min_weapon_fee', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 24],
+                               [['var_min_character_fee', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 25],
+                               [['var_weapon_mint_timestamp', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['vars(uint256)(uint256)', 26],
+                               [['var_character_mint_timestamp', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['fightXpGain()(uint256)'],
                                [['fight_xp_gain', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['mintCharacterFee()(int128)'],
                                [['mint_character_fee', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['getMintCharacterFee()(int128)'],
-        #                        [['mint_character_fee_dynamic', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['getMintCharacterFee()(int128)'],
+                               [['mint_character_fee_dynamic', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['mintWeaponFee()(int128)'],
                                [['mint_weapon_fee', None]]))
-        # calls_list.append(Call(self.cb.cryptoblades_address, ['getMintWeaponFee()(int128)'],
-        #                        [['mint_weapon_fee_dynamic', None]]))
+        calls_list.append(Call(self.cb.cryptoblades_address, ['getMintWeaponFee()(int128)'],
+                               [['mint_weapon_fee_dynamic', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['reforgeWeaponFee()(int128)'],
                                [['reforge_weapon_fee', None]]))
         calls_list.append(Call(self.cb.cryptoblades_address, ['reforgeWeaponWithDustFee()(int128)'],
@@ -520,15 +520,15 @@ class Metrics:
         calls_usd_list.append(Call(self.cb.cryptoblades_address,
                                    ['usdToSkill(int128)(uint256)', calls_multi['mint_character_fee']],
                                    [['mint_character_fee_usd', self.cb.ether]]))
-        # calls_usd_list.append(Call(self.cb.cryptoblades_address,
-        #                            ['usdToSkill(int128)(uint256)', calls_multi['mint_character_fee_dynamic']],
-        #                            [['mint_character_fee_dynamic_usd', self.cb.ether]]))
+        calls_usd_list.append(Call(self.cb.cryptoblades_address,
+                                   ['usdToSkill(int128)(uint256)', calls_multi['mint_character_fee_dynamic']],
+                                   [['mint_character_fee_dynamic_usd', self.cb.ether]]))
         calls_usd_list.append(Call(self.cb.cryptoblades_address,
                                    ['usdToSkill(int128)(uint256)', calls_multi['mint_weapon_fee']],
                                    [['mint_weapon_fee_usd', self.cb.ether]]))
-        # calls_usd_list.append(Call(self.cb.cryptoblades_address,
-        #                            ['usdToSkill(int128)(uint256)', calls_multi['mint_weapon_fee_dynamic']],
-        #                            [['mint_weapon_fee_dynamic_usd', self.cb.ether]]))
+        calls_usd_list.append(Call(self.cb.cryptoblades_address,
+                                   ['usdToSkill(int128)(uint256)', calls_multi['mint_weapon_fee_dynamic']],
+                                   [['mint_weapon_fee_dynamic_usd', self.cb.ether]]))
         calls_usd_list.append(Call(self.cb.cryptoblades_address,
                                    ['usdToSkill(int128)(uint256)', calls_multi['reforge_weapon_fee']],
                                    [['reforge_weapon_fee_usd', self.cb.ether]]))
@@ -564,19 +564,19 @@ class Metrics:
         var_param_hourly_max_power_percent_metric.labels(self.network).set(calls_multi['var_param_hourly_max_power_percent'])
         var_param_significant_hour_fights_metric.labels(self.network).set(calls_multi['var_param_significant_hour_fights'])
         var_param_hourly_pay_allowance_metric.labels(self.network).set(calls_multi['var_param_hourly_pay_allowance'])
-        # var_mint_weapon_fee_decrease_speed_metric.labels(self.network).set(calls_multi['var_mint_weapon_fee_decrease_speed'])
-        # var_mint_character_fee_decrease_speed_metric.labels(self.network).set(calls_multi['var_mint_character_fee_decrease_speed'])
-        # var_weapon_fee_increase_metric.labels(self.network).set(calls_multi['var_weapon_fee_increase'])
-        # var_character_fee_increase_metric.labels(self.network).set(calls_multi['var_character_fee_increase'])
-        # var_min_weapon_fee_metric.labels(self.network).set(calls_multi['var_min_weapon_fee'])
-        # var_min_character_fee_metric.labels(self.network).set(calls_multi['var_min_character_fee'])
-        # var_weapon_mint_timestamp_metric.labels(self.network).set(calls_multi['var_weapon_mint_timestamp'])
-        # var_character_mint_timestamp_metric.labels(self.network).set(calls_multi['var_character_mint_timestamp'])
+        var_mint_weapon_fee_decrease_speed_metric.labels(self.network).set(calls_multi['var_mint_weapon_fee_decrease_speed'])
+        var_mint_character_fee_decrease_speed_metric.labels(self.network).set(calls_multi['var_mint_character_fee_decrease_speed'])
+        var_weapon_fee_increase_metric.labels(self.network).set(calls_multi['var_weapon_fee_increase'])
+        var_character_fee_increase_metric.labels(self.network).set(calls_multi['var_character_fee_increase'])
+        var_min_weapon_fee_metric.labels(self.network).set(calls_multi['var_min_weapon_fee'])
+        var_min_character_fee_metric.labels(self.network).set(calls_multi['var_min_character_fee'])
+        var_weapon_mint_timestamp_metric.labels(self.network).set(calls_multi['var_weapon_mint_timestamp'])
+        var_character_mint_timestamp_metric.labels(self.network).set(calls_multi['var_character_mint_timestamp'])
         fight_xp_gain_metric.labels(self.network).set(calls_multi['fight_xp_gain'])
         mint_character_fee_usd_metric.labels(self.network).set(calls_multi_usd['mint_character_fee_usd'])
-        # mint_character_fee_dynamic_usd_metric.labels(self.network).set(calls_multi_usd['mint_character_fee_dynamic_usd'])
+        mint_character_fee_dynamic_usd_metric.labels(self.network).set(calls_multi_usd['mint_character_fee_dynamic_usd'])
         mint_weapon_fee_usd_metric.labels(self.network).set(calls_multi_usd['mint_weapon_fee_usd'])
-        # mint_weapon_fee_dynamic_usd_metric.labels(self.network).set(calls_multi_usd['mint_weapon_fee_dynamic_usd'])
+        mint_weapon_fee_dynamic_usd_metric.labels(self.network).set(calls_multi_usd['mint_weapon_fee_dynamic_usd'])
         reforge_weapon_fee_usd_metric.labels(self.network).set(calls_multi_usd['reforge_weapon_fee_usd'])
         reforge_weapon_with_dust_fee_usd_metric.labels(self.network).set(calls_multi_usd['reforge_weapon_with_dust_fee_usd'])
         burn_weapon_fee_usd_metric.labels(self.network).set(calls_multi_usd['burn_weapon_fee_usd'])
