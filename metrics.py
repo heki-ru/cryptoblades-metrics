@@ -25,7 +25,7 @@ class Metrics:
         self.job = 'cryptoblades'
         self.instance = 'metrics_v2'
 
-    @retry(RequestException, tries=720, timeout_secs=5)
+    @retry((RequestException, ValueError), tries=720, timeout_secs=5)
     def block_filter(self):
         while True:
             latest_block = self.cb.get_latest_block_number()
