@@ -58,11 +58,6 @@ class Cryptoblades:
         with open(config['abi']['raid']) as f:
             self.raid_abi = json.loads(f.read())
         self.raid_contract = self.w3.eth.contract(address=self.raid_address, abi=self.raid_abi)
-        # oracle
-        self.oracle_address = self.w3.toChecksumAddress(self.config['oracle_address'])
-        with open(config['abi']['oracle']) as f:
-            self.oracle_abi = json.loads(f.read())
-        self.oracle_contract = self.w3.eth.contract(address=self.oracle_address, abi=self.oracle_abi)
         # skill
         self.skill_address = self.w3.toChecksumAddress(self.config['skill_address'])
         with open(config['abi']['skill']) as f:
@@ -124,9 +119,6 @@ class Cryptoblades:
 
     def get_raid_data(self, block='latest'):
         return self.raid_contract.functions.getRaidData().call(block_identifier=block)
-
-    def get_oracle_price(self, block='latest'):
-        return self.oracle_contract.functions.currentPrice().call(block_identifier=block)
 
     def get_character_total_supply(self, block='latest'):
         return self.characters_contract.functions.totalSupply().call(block_identifier=block)
