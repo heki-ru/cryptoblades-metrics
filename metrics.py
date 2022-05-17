@@ -607,32 +607,32 @@ class Metrics:
 
         # pvp
 
-        if self.network != 'avax':
-            pvp_matchable_player_count = Gauge('cb_pvp_matchable_player_count', 'getMatchablePlayerCount',
-                                               ['network', 'pvp_tier'], registry=calls_registry)
-            pvp_ranking_pool = Gauge('cb_pvp_ranking_pool', 'rankingsPoolByTier',
-                                     ['network', 'pvp_tier'], registry=calls_registry)
-            pvp_queue = Gauge('cb_pvp_queue', 'getDuelQueue',
-                              ['network'], registry=calls_registry)
-            pvp_tax_coffer = Gauge('cb_pvp_tax_coffer', 'gameCofferTaxDue',
-                                   ['network'], registry=calls_registry)
-            pvp_tiers = range(11)
-            pvp_call_list = []
-            for tier in pvp_tiers:
-                pvp_call_list.append(Call(self.cb.pvp_address, ['getMatchablePlayerCount(uint256)(uint256)',
-                                          self.cb.config['pvp_tiers'][tier]], [['match_' + str(tier), None]]))
-                pvp_call_list.append(Call(self.cb.pvp_address, ['rankingsPoolByTier(uint8)(uint256)', tier],
-                                          [['pool_' + str(tier), self.cb.ether]]))
-            pvp_call_list.append(Call(self.cb.pvp_address, ['getDuelQueue()(uint256[])'], [['queue', len]]))
-            pvp_call_list.append(Call(self.cb.pvp_address, ['gameCofferTaxDue()(uint256)'], [['tax', self.cb.ether]]))
-            pvp_multi = Multicall(pvp_call_list, _w3=self.cb.w3, block_id=last_block)()
-            for result in pvp_multi:
-                if 'match_' in result:
-                    pvp_matchable_player_count.labels(self.network, result.split('match_')[1]).set(pvp_multi[result])
-                elif 'pool_' in result:
-                    pvp_ranking_pool.labels(self.network, result.split('pool_')[1]).set(pvp_multi[result])
-            pvp_queue.labels(self.network).set(pvp_multi['queue'])
-            pvp_tax_coffer.labels(self.network).set(pvp_multi['tax'])
+        # if self.network != 'avax':
+        #     pvp_matchable_player_count = Gauge('cb_pvp_matchable_player_count', 'getMatchablePlayerCount',
+        #                                        ['network', 'pvp_tier'], registry=calls_registry)
+        #     pvp_ranking_pool = Gauge('cb_pvp_ranking_pool', 'rankingsPoolByTier',
+        #                              ['network', 'pvp_tier'], registry=calls_registry)
+        #     pvp_queue = Gauge('cb_pvp_queue', 'getDuelQueue',
+        #                       ['network'], registry=calls_registry)
+        #     pvp_tax_coffer = Gauge('cb_pvp_tax_coffer', 'gameCofferTaxDue',
+        #                            ['network'], registry=calls_registry)
+        #     pvp_tiers = range(11)
+        #     pvp_call_list = []
+        #     for tier in pvp_tiers:
+        #         pvp_call_list.append(Call(self.cb.pvp_address, ['getMatchablePlayerCount(uint256)(uint256)',
+        #                                   self.cb.config['pvp_tiers'][tier]], [['match_' + str(tier), None]]))
+        #         pvp_call_list.append(Call(self.cb.pvp_address, ['rankingsPoolByTier(uint8)(uint256)', tier],
+        #                                   [['pool_' + str(tier), self.cb.ether]]))
+        #     pvp_call_list.append(Call(self.cb.pvp_address, ['getDuelQueue()(uint256[])'], [['queue', len]]))
+        #     pvp_call_list.append(Call(self.cb.pvp_address, ['gameCofferTaxDue()(uint256)'], [['tax', self.cb.ether]]))
+        #     pvp_multi = Multicall(pvp_call_list, _w3=self.cb.w3, block_id=last_block)()
+        #     for result in pvp_multi:
+        #         if 'match_' in result:
+        #             pvp_matchable_player_count.labels(self.network, result.split('match_')[1]).set(pvp_multi[result])
+        #         elif 'pool_' in result:
+        #             pvp_ranking_pool.labels(self.network, result.split('pool_')[1]).set(pvp_multi[result])
+        #     pvp_queue.labels(self.network).set(pvp_multi['queue'])
+        #     pvp_tax_coffer.labels(self.network).set(pvp_multi['tax'])
 
         print(self.network, last_block, 'MultiCall')
         return calls_registry
