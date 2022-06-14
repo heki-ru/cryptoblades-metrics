@@ -600,8 +600,9 @@ class Metrics:
         raid_bot_wallet_balance_metric.labels(self.network).set(raid_bot_wallet_balance)
         bridge_bot_wallet_balance_metric.labels(self.network).set(bridge_bot_wallet_balance)
         pvp_bot_wallet_balance_metric.labels(self.network).set(pvp_bot_wallet_balance)
-        treasury_skill_multiplier_metric.labels(self.network).set(calls_multi['treasury_skill_multiplier'])
         treasury_skill_remaining_supply_metric.labels(self.network).set(calls_multi['treasury_skill_remaining_supply'])
+        if calls_multi['treasury_skill_remaining_supply'] > 0:
+            treasury_skill_multiplier_metric.labels(self.network).set(calls_multi['treasury_skill_multiplier'])
         if self.network == 'bsc':
             tax_pool_king_metric.labels(self.network).set(calls_multi['tax_pool_king'])
 
