@@ -1,8 +1,10 @@
 import json
+import logging
 import threading
 import time
 import os.path
 
+import backoff
 import requests
 import yaml
 from discord_webhook import DiscordWebhook
@@ -10,6 +12,8 @@ from web3.exceptions import TransactionNotFound
 
 from cryptoblades import Cryptoblades
 from db import DB
+
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
 
 def get_element(trait):
@@ -39,44 +43,51 @@ class Parser:
         self.path = path
         self.cb = Cryptoblades(network=self.network, path=self.path)
         self.tax = self.cb.get_market_tax()
-        self.db = DB().client.db
+        self.db = DB().client.cryptoblades
         with open('config.yaml') as f:
             config = yaml.full_load(f)
         if network == 'bsc':
-            self.cb_db_listed_characters = self.db.cb_b_listed_characters
-            self.cb_db_listed_weapons = self.db.cb_b_listed_weapons
-            self.cb_db_listed_shields = self.db.cb_b_listed_shields
-            self.cb_db_sold_characters = self.db.cb_b_sold_characters
-            self.cb_db_sold_weapons = self.db.cb_b_sold_weapons
-            self.cb_db_sold_shields = self.db.cb_b_sold_shields
+            self.cb_db_listed_characters = self.db.cb_bsc_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_bsc_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_bsc_listed_shields
+            self.cb_db_sold_characters = self.db.cb_bsc_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_bsc_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_bsc_sold_shields
         elif network == 'heco':
-            self.cb_db_listed_characters = self.db.cb_h_listed_characters
-            self.cb_db_listed_weapons = self.db.cb_h_listed_weapons
-            self.cb_db_listed_shields = self.db.cb_h_listed_shields
-            self.cb_db_sold_characters = self.db.cb_h_sold_characters
-            self.cb_db_sold_weapons = self.db.cb_h_sold_weapons
-            self.cb_db_sold_shields = self.db.cb_h_sold_shields
+            self.cb_db_listed_characters = self.db.cb_heco_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_heco_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_heco_listed_shields
+            self.cb_db_sold_characters = self.db.cb_heco_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_heco_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_heco_sold_shields
         elif network == 'oec':
-            self.cb_db_listed_characters = self.db.cb_o_listed_characters
-            self.cb_db_listed_weapons = self.db.cb_o_listed_weapons
-            self.cb_db_listed_shields = self.db.cb_o_listed_shields
-            self.cb_db_sold_characters = self.db.cb_o_sold_characters
-            self.cb_db_sold_weapons = self.db.cb_o_sold_weapons
-            self.cb_db_sold_shields = self.db.cb_o_sold_shields
+            self.cb_db_listed_characters = self.db.cb_oec_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_oec_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_oec_listed_shields
+            self.cb_db_sold_characters = self.db.cb_oec_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_oec_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_oec_sold_shields
         elif network == 'poly':
-            self.cb_db_listed_characters = self.db.cb_p_listed_characters
-            self.cb_db_listed_weapons = self.db.cb_p_listed_weapons
-            self.cb_db_listed_shields = self.db.cb_p_listed_shields
-            self.cb_db_sold_characters = self.db.cb_p_sold_characters
-            self.cb_db_sold_weapons = self.db.cb_p_sold_weapons
-            self.cb_db_sold_shields = self.db.cb_p_sold_shields
+            self.cb_db_listed_characters = self.db.cb_poly_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_poly_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_poly_listed_shields
+            self.cb_db_sold_characters = self.db.cb_poly_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_poly_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_poly_sold_shields
         elif network == 'avax':
-            self.cb_db_listed_characters = self.db.cb_a_listed_characters
-            self.cb_db_listed_weapons = self.db.cb_a_listed_weapons
-            self.cb_db_listed_shields = self.db.cb_a_listed_shields
-            self.cb_db_sold_characters = self.db.cb_a_sold_characters
-            self.cb_db_sold_weapons = self.db.cb_a_sold_weapons
-            self.cb_db_sold_shields = self.db.cb_a_sold_shields
+            self.cb_db_listed_characters = self.db.cb_avax_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_avax_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_avax_listed_shields
+            self.cb_db_sold_characters = self.db.cb_avax_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_avax_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_avax_sold_shields
+        elif network == 'skale':
+            self.cb_db_listed_characters = self.db.cb_skale_listed_characters
+            self.cb_db_listed_weapons = self.db.cb_skale_listed_weapons
+            self.cb_db_listed_shields = self.db.cb_skale_listed_shields
+            self.cb_db_sold_characters = self.db.cb_skale_sold_characters
+            self.cb_db_sold_weapons = self.db.cb_skale_sold_weapons
+            self.cb_db_sold_shields = self.db.cb_skale_sold_shields
         else:
             raise TypeError(f'Wrong network {network}')
         self.webhook_url_characters = config[network]['webhook_url_characters']
@@ -88,6 +99,7 @@ class Parser:
         with open('exp_table.json') as f:
             self.exp_table = json.load(f)
 
+    @backoff.on_exception(backoff.constant, Exception, interval=5, jitter=None)
     def block_filter(self):
         last_block_path = f'{self.network}.latest'
         if not os.path.exists(last_block_path):
@@ -470,5 +482,5 @@ def run_threads():
 
 
 if __name__ == '__main__':
-    network_list = ['bsc', 'heco', 'oec', 'poly', 'avax']
+    network_list = ['bsc', 'heco', 'oec', 'poly', 'avax', 'skale']
     run_threads()
