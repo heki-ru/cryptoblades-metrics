@@ -19,6 +19,10 @@ class Cryptoblades:
             self.config = config['poly']
         elif network == 'avax':
             self.config = config['avax']
+        elif network == 'aurora':
+            self.config = config['aurora']
+        elif network == 'skale':
+            self.config = config['skale']
         else:
             raise TypeError(f'Wrong network {network}')
         if path is not None:
@@ -82,6 +86,8 @@ class Cryptoblades:
         self.bridge_address = self.w3.toChecksumAddress(self.config['bridge_address'])
         # deployer
         self.deployer_address = self.w3.toChecksumAddress(self.config['deployer_address'])
+        # tokens
+        self.tokens_address = self.w3.toChecksumAddress(self.config['tokens_address'])
         # raid_bot
         self.raid_bot_address = self.w3.toChecksumAddress(self.config['raid_bot_address'])
         # bridge_bot
@@ -100,7 +106,7 @@ class Cryptoblades:
             self.king_tax_address = self.w3.toChecksumAddress(self.config['king_tax_address'])
 
     def get_wallet_balance(self, address):
-        return self.w3.eth.getBalance(self.w3.toChecksumAddress(address))
+        return self.w3.eth.get_balance(self.w3.toChecksumAddress(address))
 
     def get_latest_block_number(self):
         return self.w3.eth.block_number
@@ -126,8 +132,8 @@ class Cryptoblades:
     def get_character_level(self, character_id, block='latest'):
         return self.characters_contract.functions.getLevel(character_id).call(block_identifier=block)
 
-    def get_character_vars(self, character_id, var):
-        return self.characters_contract.functions.nftVars(character_id, var).call()
+    def get_character_vars(self, character_id, var, block='latest'):
+        return self.characters_contract.functions.nftVars(character_id, var).call(block_identifier=block)
 
     def get_weapon_total_supply(self, block='latest'):
         return self.weapons_contract.functions.totalSupply().call(block_identifier=block)
@@ -156,14 +162,14 @@ class Cryptoblades:
     def get_market_tax(self, block='latest'):
         return self.market_contract.functions.defaultTax().call(block_identifier=block)
 
-    def get_target_buyer(self, token_address, token_id):
-        return self.market_contract.functions.getTargetBuyer(self.w3.toChecksumAddress(token_address), token_id).call()
+    def get_target_buyer(self, token_address, token_id, block='latest'):
+        return self.market_contract.functions.getTargetBuyer(self.w3.toChecksumAddress(token_address), token_id).call(block_identifier=block)
 
-    def check_market_ban(self, user_address):
-        return self.market_contract.functions.isUserBanned(self.w3.toChecksumAddress(user_address)).call()
+    def check_market_ban(self, user_address, block='latest'):
+        return self.market_contract.functions.isUserBanned(self.w3.toChecksumAddress(user_address)).call(block_identifier=block)
 
-    def get_seller_price(self, token_address, token_id):
-        return self.market_contract.functions.getSellerPrice(self.w3.toChecksumAddress(token_address), token_id).call()
+    def get_seller_price(self, token_address, token_id, block='latest'):
+        return self.market_contract.functions.getSellerPrice(self.w3.toChecksumAddress(token_address), token_id).call(block_identifier=block)
 
     def get_character_stats(self, character_id, block='latest'):
         return self.characters_contract.functions.get(character_id).call(block_identifier=block)

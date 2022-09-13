@@ -1,14 +1,17 @@
+import logging
 import threading
 import time
 import warnings
 
+import backoff
 from multicall import Call, Multicall
 from prometheus_client import Gauge, CollectorRegistry
 from prometheus_client.exposition import default_handler, generate_latest, CONTENT_TYPE_LATEST
-from retry_decorator import retry
 
 from cryptoblades import Cryptoblades
 from db import DB
+
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
 
 warnings.filterwarnings('ignore')
 
@@ -18,13 +21,13 @@ class Metrics:
         self.network = network
         self.path = path
         self.cb = Cryptoblades(network=self.network, path=self.path)
-        self.db = DB().client.db
+        self.db = DB().client.cryptoblades
         self.metrics_db = self.db.cb_metrics_last_block
-        self.vm = 'http://localhost:8428/api/v1/import/prometheus'
+        self.vm = 'http://127.0.0.1:8428/api/v1/import/prometheus'
         self.job = 'cryptoblades'
         self.instance = 'metrics_v2'
 
-    @retry(Exception, tries=720, timeout_secs=5)
+    @backoff.on_exception(backoff.constant, Exception, interval=5, jitter=None)
     def block_filter(self):
         while True:
             latest_block = self.cb.get_latest_block_number()
@@ -121,7 +124,7 @@ class Metrics:
                             for event in quest_complete:
                                 quest = event['args']['questID']
                                 character = event['args']['characterID']
-                                tier = self.cb.get_quests(quest)[1]
+                                tier = self.cb.get_quests(quest, block=last_block)[1]
                                 user = txn_receipt['from']
                                 print(self.network, last_block, 'QuestComplete')
                                 quest_complete_metric.labels(self.network, tier, quest, character,
@@ -131,7 +134,7 @@ class Metrics:
                             for event in quest_skipped:
                                 quest = event['args']['questID']
                                 character = event['args']['characterID']
-                                tier = self.cb.get_quests(quest)[1]
+                                tier = self.cb.get_quests(quest, block=last_block)[1]
                                 user = txn_receipt['from']
                                 print(self.network, last_block, 'QuestSkipped')
                                 quest_skipped_metric.labels(self.network, tier, quest, character,
@@ -141,7 +144,7 @@ class Metrics:
                             for event in quest_assigned:
                                 quest = event['args']['questID']
                                 character = event['args']['characterID']
-                                tier = self.cb.get_quests(quest)[1]
+                                tier = self.cb.get_quests(quest, block=last_block)[1]
                                 user = txn_receipt['from']
                                 print(self.network, last_block, 'QuestAssigned')
                                 quest_assigned_metric.labels(self.network, tier, quest, character,
@@ -179,7 +182,7 @@ class Metrics:
                         if character_burned:
                             for event in character_burned:
                                 character = event['args']['id']
-                                character_level = self.cb.get_character_level(character)
+                                character_level = self.cb.get_character_level(character, block=last_block)
                                 user = event['args']['owner']
                                 print(self.network, last_block, 'Burned (character)')
                                 character_burned_metric.labels(self.network, character, character_level,
@@ -190,7 +193,7 @@ class Metrics:
                         if weapon_minted:
                             for event in weapon_minted:
                                 weapon = event['args']['weapon']
-                                weapon_stars = self.cb.get_weapon_stars(weapon)
+                                weapon_stars = self.cb.get_weapon_stars(weapon)  # NFL
                                 weapon_type = event['args']['weaponType']
                                 user = event['args']['minter']
                                 print(self.network, last_block, 'NewWeapon')
@@ -200,7 +203,7 @@ class Metrics:
                         if weapon_burned:
                             for event in weapon_burned:
                                 weapon = event['args']['burned']
-                                weapon_stars = self.cb.get_weapon_stars(weapon)
+                                weapon_stars = self.cb.get_weapon_stars(weapon, block=last_block)
                                 user = event['args']['owner']
                                 print(self.network, last_block, 'Burned (weapon)')
                                 weapon_burned_metric.labels(self.network, weapon, weapon_stars,
@@ -211,7 +214,7 @@ class Metrics:
                         if shield_minted:
                             for event in shield_minted:
                                 shield = event['args']['shield']
-                                shield_stars = self.cb.get_shield_stars(shield)
+                                shield_stars = self.cb.get_shield_stars(shield)  # NFL
                                 user = event['args']['minter']
                                 print(self.network, last_block, 'NewShield')
                                 shield_minted_metric.labels(self.network, shield, shield_stars,
@@ -220,7 +223,7 @@ class Metrics:
                         if shield_burned:
                             for event in shield_burned:
                                 shield = event['args']['shield']
-                                shield_stars = self.cb.get_shield_stars(shield)
+                                shield_stars = self.cb.get_shield_stars(shield, block=last_block)
                                 user = event['args']['burner']
                                 print(self.network, last_block, 'Burned (shield)')
                                 shield_burned_metric.labels(self.network, shield, shield_stars,
@@ -229,6 +232,7 @@ class Metrics:
             return events_registry
 
     def calls(self, last_block):
+        t1_start = time.perf_counter()
         calls_registry = CollectorRegistry()
         calls_list = []
         calls_usd_list = []
@@ -394,6 +398,9 @@ class Metrics:
         deployer_wallet_balance_metric = Gauge('cb_deployer_wallet_balance',
                                                'Balance',
                                                ['network'], registry=calls_registry)
+        tokens_wallet_balance_metric = Gauge('cb_tokens_wallet_balance',
+                                             'Balance',
+                                             ['network'], registry=calls_registry)
         raid_bot_wallet_balance_metric = Gauge('cb_raid_bot_wallet_balance',
                                                'Balance',
                                                ['network'], registry=calls_registry)
@@ -509,10 +516,11 @@ class Metrics:
 
         raid_data = self.cb.get_raid_data(block=last_block)
         deployer_wallet_balance = self.cb.ether(self.cb.get_wallet_balance(self.cb.deployer_address))
+        tokens_wallet_balance = self.cb.ether(self.cb.get_wallet_balance(self.cb.tokens_address))
         raid_bot_wallet_balance = self.cb.ether(self.cb.get_wallet_balance(self.cb.raid_bot_address))
         bridge_bot_wallet_balance = self.cb.ether(self.cb.get_wallet_balance(self.cb.bridge_bot_address))
         pvp_bot_wallet_balance = self.cb.ether(self.cb.get_wallet_balance(self.cb.pvp_bot_address))
-        calls_multi = Multicall(calls_list, _w3=self.cb.w3)()
+        calls_multi = Multicall(calls_list, _w3=self.cb.w3, block_id=last_block)()
 
         # calls define
 
@@ -540,7 +548,7 @@ class Metrics:
 
         # calls process
 
-        calls_multi_usd = Multicall(calls_usd_list, _w3=self.cb.w3)()
+        calls_multi_usd = Multicall(calls_usd_list, _w3=self.cb.w3, block_id=last_block)()
 
         # set metrics
 
@@ -595,8 +603,10 @@ class Metrics:
         raid_durability_metric.labels(self.network).set(raid_data[9])
         raid_xp_metric.labels(self.network).set(raid_data[10])
         reward_pool_skill_metric.labels(self.network).set(calls_multi['reward_pool_skill'])
-        bridge_pool_skill_metric.labels(self.network).set(calls_multi['bridge_pool_skill'])
+        if self.network != 'skale' and self.network != 'aurora':
+            bridge_pool_skill_metric.labels(self.network).set(calls_multi['bridge_pool_skill'])
         deployer_wallet_balance_metric.labels(self.network).set(deployer_wallet_balance)
+        tokens_wallet_balance_metric.labels(self.network).set(tokens_wallet_balance)
         raid_bot_wallet_balance_metric.labels(self.network).set(raid_bot_wallet_balance)
         bridge_bot_wallet_balance_metric.labels(self.network).set(bridge_bot_wallet_balance)
         pvp_bot_wallet_balance_metric.labels(self.network).set(pvp_bot_wallet_balance)
@@ -635,7 +645,8 @@ class Metrics:
         #     pvp_queue.labels(self.network).set(pvp_multi['queue'])
         #     pvp_tax_coffer.labels(self.network).set(pvp_multi['tax'])
 
-        print(self.network, last_block, 'MultiCall')
+        t1_stop = time.perf_counter()
+        print(f"{self.network} {last_block} MultiCall {(t1_stop - t1_start):.5f}")
         return calls_registry
 
     def push_to_vm(self, registry, timestamp):
@@ -657,5 +668,5 @@ def run_threads():
 
 
 if __name__ == '__main__':
-    network_list = ['bsc', 'heco', 'oec', 'poly', 'avax']
+    network_list = ['bsc', 'heco', 'oec', 'poly', 'avax', 'skale']
     run_threads()
